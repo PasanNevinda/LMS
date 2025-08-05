@@ -10,9 +10,10 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using LMS.Data;
+using LMS.Models.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using LMS.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -30,13 +31,15 @@ namespace LMS.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _context;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +47,7 @@ namespace LMS.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         /// <summary>
@@ -52,6 +56,10 @@ namespace LMS.Areas.Identity.Pages.Account
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
+
+        [BindProperty(SupportsGet =true)]
+        public string Type { get; set; }
+
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -75,6 +83,14 @@ namespace LMS.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+            /// 
+
+
+            [Required]
+            [Display(Name = "Name")]
+            [StringLength(20, ErrorMessage = "The {0} must be at most {1} characters long.")]
+            public string Name { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -101,27 +117,56 @@ namespace LMS.Areas.Identity.Pages.Account
         }
 
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task OnGetAsync(string Type, string returnUrl = null)
         {
             ReturnUrl = returnUrl;
+            this.Type = Type;
+            _logger.LogInformation($"Received Type: {this.Type}");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+            _logger.LogInformation($"OnPostAsync: Type = {Type}");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                ApplicationUser user;
+                if (Type == "Teacher")
+                {
+                    user = new Teacher
+                    {
+                        UserName = Input.Name,
+                        Email = Input.Email,
+                        RegistrationTime = DateTime.UtcNow,
+                        FullName = Input.Name
+                    };
+                    //_context.Teachers.Add((Teacher)user);
+
+                }
+                else
+                {
+                    user = new Student
+                    {
+                        UserName = Input.Name,
+                        Email = Input.Email,
+                        RegistrationTime = DateTime.UtcNow,
+                        FullName = Input.Name
+                    };
+                    //_context.Students.Add((Student)user);
+                }
+
+
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
+                await _userManager.AddToRoleAsync(user, Type);
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    _logger.LogInformation($"User created a new {Type} account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
