@@ -14,7 +14,7 @@ namespace LMS.Models.Entities
 
 
         [Required, ForeignKey(nameof(Course))]
-        public string CourseId { get; set; }
+        public int CourseId { get; set; }
 
         public DateTime EnrolledTime { get; set; } = DateTime.UtcNow;
 

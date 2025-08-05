@@ -11,14 +11,14 @@ namespace LMS.Models.Entities
 
     public class Admin: ApplicationUser
     {
-        [Key, ForeignKey(nameof(User))]
-        public string AdminId { get; set; }
-
+       
         public AdminLevel AdminLevel { get; private set; }
         public DateTime? LastActiveTime { get; set; }
-        
+
+        public Boolean IsMainAdmin { get; set; } = false;
+
         // Navigation Properties
-        public ApplicationUser User { get; set; }
+        //public ApplicationUser User { get; set; }
 
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace LMS.Models.Entities
+﻿/*namespace LMS.Models.Entities
 {
     public class Grade
     {
     }
-}
+}*/

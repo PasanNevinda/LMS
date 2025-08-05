@@ -32,18 +32,18 @@ namespace LMS.Models.Entities
         // Tags for the course (implemented later)
 
         [Range(0, 5)]
-        public decimal rating { get; set; } = 0;
+        public decimal Rating { get; set; } = 0;
 
         [Required]
-        public decimal price { get; set; }
+        public decimal Price { get; set; }
 
 
 
-        // Fks
+        /*// Fks
         [Required, ForeignKey(nameof(Subject))]
         public int SubjectId { get; set; }
 
-        [Required, ForeignKey(nameof(Grade))]
+        [Required, ForeignKey(nameof(Grade))]*/
         public int GradeId { get; set; }
 
         [Required, ForeignKey(nameof(Teacher))]
@@ -53,11 +53,8 @@ namespace LMS.Models.Entities
 
         // Navigation Properties
 
-        public ICollection<Teacher> Teachers { get; set; } = new List<Teacher>();
-        public ICollection<Student> Students { get; set; } = new List<Student>();
-
-        public Subject Subject { get; set; }
-        public Grade Grade { get; set; }
+        //public Subject Subject { get; set; }
+       // public Grade Grade { get; set; }
 
         public ICollection<PreviewCourseQ_A> PreviewCourseQ_As { get; set; } = new List<PreviewCourseQ_A>();
 
