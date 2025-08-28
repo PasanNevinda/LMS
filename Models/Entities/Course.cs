@@ -63,5 +63,7 @@ namespace LMS.Models.Entities
         public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
 
         public ICollection<Exam> Exams { get; set; } = new List<Exam>();
+
+        public ICollection<Module> Modules { get; set; } = new List<Module>();
     }
 }

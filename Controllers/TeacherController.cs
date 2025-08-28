@@ -23,6 +23,10 @@ namespace LMS.Controllers
         public async Task<IActionResult> Index()
         {
             var teacher = await _userManager.GetUserAsync(User) as Teacher;
+            if (teacher == null)
+            {
+                return Redirect("~/Identity/Account/Login");
+            }
             ViewBag.Name = teacher.UserName;
             return View();
         }

@@ -1,0 +1,38 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model LMS.ViewModels.CourseDetailsVms.ModuleVm
+
+<div class="accordion-item" id="module-@Model.Id">
+    <h2 class="accordion-header" id="heading-@Model.Id">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@Model.Id">
+            <span id="module-header-@Model.Id">@Model.Name</span>
+        </button>
+    </h2>
+    <div id="collapse-@Model.Id" class="accordion-collapse collapse" data-bs-parent="#modulesAccordion">
+        <div class="accordion-body">
+            <p class="text-muted" id="module-desc-@Model.Id">@Model.Description</p>
+
+            <div class="mb-2">
+                <button class="btn btn-sm btn-outline-secondary btn-edit-module"
+                        data-id="@Model.Id" data-name="@Model.Name" data-desc="@Model.Description"
+                        data-bs-toggle="modal" data-bs-target="#editModuleModal">
+                    ✏️ Edit Module
+                </button>
+                <button class="btn btn-sm btn-outline-success btn-add-item" data-moduleid="@Model.Id">➕ Add Item</button>
+            </div>
+
+            @* <ul class="list-group" id="module-items-@Model.Id">
+                @foreach (var it in Model.Items)
+                {
+                    //@await Html.PartialAsync("Partials/_ModuleItemPartial", it)
+                    <div>
+                        @it.DisplayName
+                    </div>
+                }
+            </ul> *@
+        </div>
+    </div>
+</div>
