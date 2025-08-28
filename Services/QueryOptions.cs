@@ -11,6 +11,7 @@ namespace LMS.Services
         public string Includes
         {
             set => includes = value.Replace(" ", "").Split(',');
+
         }
 
         public string[] GetIncludes() => includes;

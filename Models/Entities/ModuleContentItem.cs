@@ -10,7 +10,7 @@ namespace LMS.Models.Entities
         public DateTime UpdateTime { get; set; } = DateTime.UtcNow;
         public int OrderNo { get; set; } = 0;
 
-
+        public string DisplayName { get; set; } = "Display Name";
 
         // Fks
         [Required, ForeignKey(nameof(Module))]

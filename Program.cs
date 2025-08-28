@@ -24,6 +24,15 @@ namespace LMS
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
+            // Add session services
+            builder.Services.AddDistributedMemoryCache(); // Required for session
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // session timeout
+                /*options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true; // Required for GDPR compliance*/
+            });
+
             var app = builder.Build();
 
             // Seed roles and admin user
@@ -49,6 +58,8 @@ namespace LMS
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseSession();
 
             app.UseAuthentication();
 

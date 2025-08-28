@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LMS.Services
 {
+
+    // do not use this Repository pattern for user tables, just use " private readonly UserManager<ApplicationUser> _userManager; "
     public class Repository<T> : IRepository<T> where T : class
     {
         protected ApplicationDbContext _context { get; set; }
