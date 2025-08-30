@@ -184,7 +184,7 @@ namespace LMS.Data.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("Courses");
+                    b.ToTable("Courses", (string)null);
                 });
 
             modelBuilder.Entity("LMS.Models.Entities.Enrollment", b =>
@@ -202,7 +202,7 @@ namespace LMS.Data.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Enrollments");
+                    b.ToTable("Enrollments", (string)null);
                 });
 
             modelBuilder.Entity("LMS.Models.Entities.Exam", b =>
@@ -237,7 +237,7 @@ namespace LMS.Data.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Exams");
+                    b.ToTable("Exams", (string)null);
                 });
 
             modelBuilder.Entity("LMS.Models.Entities.Module", b =>
@@ -272,7 +272,7 @@ namespace LMS.Data.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Modules");
+                    b.ToTable("Modules", (string)null);
                 });
 
             modelBuilder.Entity("LMS.Models.Entities.ModuleContentItem", b =>
@@ -297,7 +297,7 @@ namespace LMS.Data.Migrations
 
                     b.HasIndex("ContentItemId");
 
-                    b.ToTable("ModuleContentItems");
+                    b.ToTable("ModuleContentItems", (string)null);
                 });
 
             modelBuilder.Entity("LMS.Models.Entities.PreviewCourseQ_A", b =>
@@ -325,7 +325,7 @@ namespace LMS.Data.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("PreviewCourseQ_As");
+                    b.ToTable("PreviewCourseQ_As", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

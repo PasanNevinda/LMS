@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LMS.Models.Entities
 {
-    public abstract class ContentItem
+    public  class ContentItem
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;

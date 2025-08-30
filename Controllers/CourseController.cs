@@ -1,11 +1,12 @@
-﻿using System.Security.Claims;
-using LMS.Data;
+﻿using LMS.Data;
 using LMS.Models.Entities;
 using LMS.Services;
 using LMS.ViewModels;
 using LMS.ViewModels.CourseDetailsVms;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LMS.Controllers
 {
@@ -53,6 +54,7 @@ namespace LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> CreateStep2(Step2ViewModel Vm)
         {
             if (!ModelState.IsValid)

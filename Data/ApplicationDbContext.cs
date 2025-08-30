@@ -28,9 +28,10 @@ namespace LMS.Data
 
 
         public DbSet<ContentItem> ContentItems { get; set; }
-        public DbSet<VideoContent> VideoContents { get; set; }
-        public DbSet<DocumentContent> DocumentContents { get; set; }
-        public DbSet<LinkContent> LinkContents { get; set; }
+       // public DbSet<ContentItem> ContentUploads { get; set; }
+       // public DbSet<VideoContent> VideoContents { get; set; }
+      //  public DbSet<DocumentContent> DocumentContents { get; set; }
+       // public DbSet<LinkContent> LinkContents { get; set; }
 
         public DbSet<ModuleContentItem> ModuleContentItems { get; set; }
 
@@ -48,9 +49,9 @@ namespace LMS.Data
 
             // TPT configeration for ContentItem
             builder.Entity<ContentItem>().ToTable("ContentItems");
-            builder.Entity<VideoContent>().ToTable("VideoContents");
-            builder.Entity<DocumentContent>().ToTable("DocumentContents");
-            builder.Entity<LinkContent>().ToTable("LinkContents");
+            //builder.Entity<VideoContent>().ToTable("VideoContents");
+            //builder.Entity<DocumentContent>().ToTable("DocumentContents");
+            //builder.Entity<LinkContent>().ToTable("LinkContents");
 
             builder.Entity<Course>()
              .Property(c => c.Price)
