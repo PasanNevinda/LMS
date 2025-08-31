@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
 namespace LMS.Controllers
-{
+{/*
     public class ContentController : Controller
     {
         private readonly IWebHostEnvironment _env;
@@ -100,5 +100,80 @@ namespace LMS.Controllers
             }
             return View(model);
         }
+
+
+    }*/
+    public class ContentController : Controller
+    {
+        private readonly IFileStorage _fileStorage;
+        private readonly ApplicationDbContext _db;
+
+        public ContentController(IFileStorage fileStorage, ApplicationDbContext db)
+        {
+            _fileStorage = fileStorage;
+            _db = db;
+        }
+
+        [HttpGet]
+        public IActionResult ContentUpload()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ContentUpload(List<IFormFile> files)
+        {
+            if (files == null || files.Count == 0)
+            {
+                ModelState.AddModelError("", "Please select one or more files.");
+                return View("Upload");
+            }
+
+            var uploadedCount = 0;
+            foreach (var file in files)
+            {
+                try
+                {
+                    if (file.Length == 0) continue;
+
+                    // Optional: limit file size (e.g. 50MB max)
+                    const long fileLimit = 50 * 1024 * 1024;
+                    if (file.Length > fileLimit)
+                    {
+                        ModelState.AddModelError("", $"File '{file.FileName}' exceeds the maximum allowed size.");
+                        continue;
+                    }
+
+                    // Save file to local storage
+                    string relativePath = await _fileStorage.SaveFileAsync(file);
+                    var TID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                    // Record metadata in database
+                    var record = new ContentItem
+                    {
+                        Title = Path.GetFileName(file.FileName),
+                        FilePath = relativePath,
+                        //ContentType = file.ContentType,
+                        //Size = file.Length,
+                        CreatedAt = DateTime.UtcNow,
+                        Description = Path.GetFileName(file.FileName),
+                        TeacherId = TID
+                    };
+                    _db.ContentItems.Add(record);
+                    uploadedCount++;
+                }
+                catch (Exception ex)
+                {
+                    // Log exception (omitted) and inform user
+                    ModelState.AddModelError("", $"Error uploading '{file.FileName}': {ex.Message}");
+                }
+            }
+
+            await _db.SaveChangesAsync();
+            ViewData["Result"] = $"{uploadedCount} file(s) uploaded successfully.";
+            return View("ContentUpload");
+        }
     }
-} 
+
+}

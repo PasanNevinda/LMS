@@ -25,7 +25,7 @@ namespace LMS.Data
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Module> Modules { get; set; }
         public DbSet<Exam> Exams { get; set; }
-
+       // public DbSet<ContentItem> FileRecords { get; set; }
 
         public DbSet<ContentItem> ContentItems { get; set; }
        // public DbSet<ContentItem> ContentUploads { get; set; }
@@ -41,6 +41,17 @@ namespace LMS.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+          //  builder.Entity<ContentUpload>(entity =>
+          /*  {
+                entity.ToTable("ContentItems");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired();
+                entity.Property(e => e.FilePath).IsRequired();
+                entity.Property(e => e.Description).IsRequired();
+                //entity.Property(e => e.ContentType).IsRequired();
+                //entity.Property(e => e.Size).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+            });*/
 
             // Table Per Type (TPT) configuration for User
             builder.Entity<Student>().ToTable("Students");
