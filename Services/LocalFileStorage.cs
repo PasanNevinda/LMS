@@ -65,6 +65,26 @@
             // Return relative path (e.g. "Documents/{filename}")
             return Path.Combine(category, safeFileName);
         }
+
+        public async Task<bool> DeleteFileAsync(string filePath)
+        {
+            try
+            {
+                string fullPath = Path.Combine(_env.WebRootPath, filePath);
+
+                if (File.Exists(fullPath))
+                {
+                    File.Delete(fullPath);
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 
 }

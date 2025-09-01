@@ -25,7 +25,7 @@ namespace LMS.Data
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Module> Modules { get; set; }
         public DbSet<Exam> Exams { get; set; }
-       // public DbSet<ContentItem> FileRecords { get; set; }
+       
 
         public DbSet<ContentItem> ContentItems { get; set; }
        // public DbSet<ContentItem> ContentUploads { get; set; }
