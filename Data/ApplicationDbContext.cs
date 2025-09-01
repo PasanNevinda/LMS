@@ -25,12 +25,13 @@ namespace LMS.Data
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Module> Modules { get; set; }
         public DbSet<Exam> Exams { get; set; }
-
+       // public DbSet<ContentItem> FileRecords { get; set; }
 
         public DbSet<ContentItem> ContentItems { get; set; }
-        public DbSet<VideoContent> VideoContents { get; set; }
-        public DbSet<DocumentContent> DocumentContents { get; set; }
-        public DbSet<LinkContent> LinkContents { get; set; }
+       // public DbSet<ContentItem> ContentUploads { get; set; }
+       // public DbSet<VideoContent> VideoContents { get; set; }
+      //  public DbSet<DocumentContent> DocumentContents { get; set; }
+       // public DbSet<LinkContent> LinkContents { get; set; }
 
         public DbSet<ModuleContentItem> ModuleContentItems { get; set; }
 
@@ -40,6 +41,17 @@ namespace LMS.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+          //  builder.Entity<ContentUpload>(entity =>
+          /*  {
+                entity.ToTable("ContentItems");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired();
+                entity.Property(e => e.FilePath).IsRequired();
+                entity.Property(e => e.Description).IsRequired();
+                //entity.Property(e => e.ContentType).IsRequired();
+                //entity.Property(e => e.Size).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired();
+            });*/
 
             // Table Per Type (TPT) configuration for User
             builder.Entity<Student>().ToTable("Students");
@@ -48,9 +60,9 @@ namespace LMS.Data
 
             // TPT configeration for ContentItem
             builder.Entity<ContentItem>().ToTable("ContentItems");
-            builder.Entity<VideoContent>().ToTable("VideoContents");
-            builder.Entity<DocumentContent>().ToTable("DocumentContents");
-            builder.Entity<LinkContent>().ToTable("LinkContents");
+            //builder.Entity<VideoContent>().ToTable("VideoContents");
+            //builder.Entity<DocumentContent>().ToTable("DocumentContents");
+            //builder.Entity<LinkContent>().ToTable("LinkContents");
 
             builder.Entity<Course>()
              .Property(c => c.Price)
