@@ -11,6 +11,8 @@ namespace LMS.Models.Entities
         English = 2,
     }
 
+    public enum CourseStatus{ Draft, Pending, Rejected, Approved }
+
     public class Course
     {
         [Key]
@@ -30,6 +32,11 @@ namespace LMS.Models.Entities
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         // Tags for the course (implemented later)
+
+        public string Curriculum {  get; set; } = string.Empty;
+        public string TargetAudiance {  get; set; } = string.Empty;
+        public string CourseImage {  get; set; } = string.Empty;
+        public string PromotionVideo {  get; set; } = string.Empty;
 
         [Range(0, 5)]
         public decimal Rating { get; set; } = 0;

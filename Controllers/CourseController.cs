@@ -79,6 +79,12 @@ namespace LMS.Controllers
         }
 
         [HttpGet]
+        public IActionResult CreateStep3()
+        {
+            return View();
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var course = await _courses.GetByIdAsync(id, new QueryOptions<Course> { Includes = "Modules, Modules.ModuleContentItems, Modules.ModuleContentItems.ContentItem" });
