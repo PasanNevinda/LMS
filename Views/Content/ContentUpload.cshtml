@@ -15,16 +15,18 @@
 <body>
     <div class="container mt-5">
         <h2 class="mb-4">Upload Files</h2>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <form  asp-controller="Content" asp-action="ContentUpload" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="files" class="form-label">Select Files</label>
-                <input type="file" class="form-control" id="files" name="Files" multiple />
+                <input type="file" class="form-control" id="Files" name="Files" multiple />
                 @if (!ViewData.ModelState.IsValid)
                 {
                     <div class="text-danger">
                         @Html.ValidationMessageFor(model => model.Files)
                     </div>
                 }
+                @Html.ValidationMessageFor(m => m.Files, "", new { @class = "text-danger" })
             </div>
             <button type="submit" class="btn btn-primary">Upload</button>
         </form>
