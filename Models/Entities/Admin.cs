@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Identity.Client;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LMS.Models.Entities
@@ -16,6 +17,8 @@ namespace LMS.Models.Entities
         public DateTime? LastActiveTime { get; set; }
 
         public Boolean IsMainAdmin { get; set; } = false;
+
+        public ICollection<Course> ReviewedCourses { get; set; } = new List<Course>();
 
         // Navigation Properties
         //public ApplicationUser User { get; set; }

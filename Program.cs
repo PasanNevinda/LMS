@@ -25,6 +25,8 @@ namespace LMS
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<ICourseService, CourseService>();
 
             // Add session services
             builder.Services.AddDistributedMemoryCache(); // Required for session

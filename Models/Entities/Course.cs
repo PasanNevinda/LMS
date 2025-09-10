@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Identity.Client;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography.X509Certificates;
 
@@ -6,12 +7,18 @@ namespace LMS.Models.Entities
 {
     public enum Language
     {
+        [Display(Name = "Sinhala")]
         Sinhala = 0,
+
+        [Display(Name = "Tamil")]
         Tamil1 = 1,
+
+        [Display(Name = "English")]
         English = 2,
     }
 
-    public enum CourseStatus{ Draft, Pending, Rejected, Approved }
+
+    public enum CourseStatus{ Draft, Pending, Rejected, Approved, Published }
 
     public class Course
     {
@@ -31,6 +38,8 @@ namespace LMS.Models.Entities
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+        public CourseStatus Status { get; set; } = CourseStatus.Draft;
+
         // Tags for the course (implemented later)
 
         public string Curriculum {  get; set; } = string.Empty;
@@ -41,7 +50,6 @@ namespace LMS.Models.Entities
         [Range(0, 5)]
         public decimal Rating { get; set; } = 0;
 
-        [Required]
         public decimal Price { get; set; }
 
 
@@ -51,17 +59,18 @@ namespace LMS.Models.Entities
         public int SubjectId { get; set; }
 
         [Required, ForeignKey(nameof(Grade))]*/
-        public int GradeId { get; set; }
 
         [Required, ForeignKey(nameof(Teacher))]
         public string TeacherId { get; set; }
 
 
+        public int? CategoryId { get; set; }
+        public Category? Category { get; set; }
 
-        // Navigation Properties
-
-        //public Subject Subject { get; set; }
-       // public Grade Grade { get; set; }
+        public string ReviewNotes { get; set; } = string.Empty;
+        public string? ReviewedById { get; set; } 
+        public DateTime? ReviewedAt { get; set; } = null;
+        public Admin? ReviewedBy { get; set; }
 
         public ICollection<PreviewCourseQ_A> PreviewCourseQ_As { get; set; } = new List<PreviewCourseQ_A>();
 

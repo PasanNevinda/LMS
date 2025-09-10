@@ -1,0 +1,76 @@
+﻿@model LMS.ViewModels.CourseDetailsVms.ModuleVm
+
+<!-- Module Card -->
+<div class="module-card" data-module-id="@Model.Id">
+    <div class="module-header" onclick="toggleModule(@Model.Id)">
+        <div class="module-title">
+            <i class="fas fa-play-circle text-primary"></i>
+            @Model.Name
+            <span class="badge bg-light text-dark ms-2">
+                @* @($"{Model.Items.Count} items • {Model.Items.Sum(i => i.DurationMinutes)} min") *@
+            </span>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="module-actions">
+                <button class="btn-sm-icon btn-edit" onclick="event.stopPropagation(); editModule(@Model.Id)" title="Edit Module">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-sm-icon btn-delete" onclick="event.stopPropagation(); deleteModule(@Model.Id)" title="Delete Module">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <button class="module-toggle" id="toggle-@Model.Id">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="module-content" id="content-@Model.Id">
+        <div class="module-description">
+            @Model.Description
+        </div>
+
+        <ul class="module-items">
+            @foreach (var item in Model.Items)
+            {
+                @* <li class="module-item">
+                    <div class="item-info">
+                        <div class="item-icon @(item.Type.ToLower())">
+                            @if (item.Type == "Video")
+                            {
+                                <i class="fas fa-play"></i>
+                            }
+                            else if (item.Type == "PDF")
+                            {
+                                <i class="fas fa-file-pdf"></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-file"></i>
+                            }
+                        </div>
+                        <div class="item-details">
+                            <div class="item-title">@item.Title</div>
+                            <div class="item-type">@item.Type • @item.DisplayDuration</div>
+                        </div>
+                    </div>
+                    <div class="edit-controls">
+                        <button class="btn-sm-icon btn-edit" onclick="editItem(@Model.Id, @item.Id)" title="Edit Item">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-sm-icon btn-delete" onclick="deleteItem(@Model.Id, @item.Id)" title="Delete Item">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </li> *@
+            }
+        </ul>
+
+        @* <div class="p-3 text-center border-top" style="display: none;">
+            <button class="btn btn-outline-success" onclick="showAddItemModal(@Model.Id)">
+                <i class="fas fa-plus me-2"></i>
+                Add Content Item
+            </button>
+        </div> *@
+    </div>
+</div>
