@@ -1,0 +1,94 @@
+﻿@model List<LMS.ViewModels.Dashboard.CourseVm>
+
+@if (Model?.Any() == true)
+{
+    <div class="row">
+        @foreach (var course in Model)
+        {
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card course-card h-100" data-course-id="@course.CourseId">
+                    <div class="position-relative">
+                        <!-- Course Image -->
+                        @if (!string.IsNullOrEmpty(course.ImagePath))
+                        {
+                            <img src="@course.ImagePath" class="card-img-top" style="height: 120px; object-fit: cover;" alt="@course.Title">
+                        }
+                        else
+                        {
+                            <div class="course-image" style="background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                        }
+
+                        <!-- Status Badge -->
+                        <span class="badge bg-warning course-status-badge">UNDER REVIEW</span>
+                    </div>
+
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title course-title mb-2 text-truncate">@course.Title</h6>
+
+                        <!-- Review Status Info -->
+                        <div class="alert alert-warning py-2 px-3 mb-3" role="alert">
+                            <small>
+                                <i class="bi bi-info-circle me-1"></i>
+                                Course is under review by our team
+                            </small>
+                        </div>
+
+                        <!-- Progress Section -->
+                        <div class="mb-3 mt-auto">
+                            @* <div class="d-flex justify-content-between align-items-center mb-1">
+                                <small class="text-muted">Completion</small>
+                                <small class="text-muted">@course.Progress%</small>
+                            </div> *@
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill bg-warning" style="width: 100%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2">
+                            <a href="@Url.Action("Details", "Course", new { id = course.CourseId })"
+                               class="btn btn-outline-primary btn-sm flex-fill">
+                                <i class="bi bi-eye me-1"></i>View
+                            </a>
+                            @* <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("WithdrawReview", "Course", new { id = course.CourseId })">
+                                            <i class="bi bi-arrow-left-circle me-2"></i>Withdraw from Review
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("ReviewHistory", "Course", new { id = course.CourseId })">
+                                            <i class="bi bi-clock-history me-2"></i>Review History
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div> *@
+                        </div>
+
+                        <!-- Submitted Date -->
+                        <small class="text-muted mt-2">Submitted @course.UpdatedAt.ToString("MMM dd, yyyy")</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-clock-history" style="font-size: 4rem; color: #dee2e6;"></i>
+        </div>
+        <h4 class="text-muted mb-3">No courses under review</h4>
+        <p class="text-muted mb-4">Complete your draft courses and submit them for review.</p>
+        <a asp-controller="Course" asp-action="Index" class="btn btn-warning">
+            <i class="bi bi-pencil me-2"></i>Continue Editing Drafts
+        </a>
+    </div>
+}

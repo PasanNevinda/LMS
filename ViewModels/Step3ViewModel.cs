@@ -3,7 +3,7 @@ using LMS.Models.Entities;
 
 namespace LMS.ViewModels
 {
-    public class Step2ViewModel
+    public class Step3ViewModel
     {
         
         public string Description { get; set; }

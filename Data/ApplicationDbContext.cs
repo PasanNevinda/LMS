@@ -22,6 +22,7 @@ namespace LMS.Data
 
 
         public DbSet<Course> Courses { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Module> Modules { get; set; }
         public DbSet<Exam> Exams { get; set; }
@@ -41,17 +42,24 @@ namespace LMS.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-          //  builder.Entity<ContentUpload>(entity =>
-          /*  {
-                entity.ToTable("ContentItems");
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Title).IsRequired();
-                entity.Property(e => e.FilePath).IsRequired();
-                entity.Property(e => e.Description).IsRequired();
-                //entity.Property(e => e.ContentType).IsRequired();
-                //entity.Property(e => e.Size).IsRequired();
-                entity.Property(e => e.CreatedAt).IsRequired();
-            });*/
+
+            builder.Entity<Category>().HasData(
+            new Category { Id = 1, Name = "Programming" },
+            new Category { Id = 2, Name = "Design" },
+            new Category { Id = 3, Name = "Mathematics" }
+        );
+
+            //  builder.Entity<ContentUpload>(entity =>
+            /*  {
+                  entity.ToTable("ContentItems");
+                  entity.HasKey(e => e.Id);
+                  entity.Property(e => e.Title).IsRequired();
+                  entity.Property(e => e.FilePath).IsRequired();
+                  entity.Property(e => e.Description).IsRequired();
+                  //entity.Property(e => e.ContentType).IsRequired();
+                  //entity.Property(e => e.Size).IsRequired();
+                  entity.Property(e => e.CreatedAt).IsRequired();
+              });*/
 
             // Table Per Type (TPT) configuration for User
             builder.Entity<Student>().ToTable("Students");
@@ -116,10 +124,18 @@ namespace LMS.Data
                 .HasForeignKey(p => p.StudentId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            builder.Entity<Course>()
+                .HasOne(c => c.ReviewedBy)
+                .WithMany(a => a.ReviewedCourses)
+                .HasForeignKey(c => c.ReviewedById)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.NoAction);
 
-
-
-
+            builder.Entity<Course>()
+                .HasOne(c => c.Category)
+                .WithMany(cat => cat.Courses)
+                .HasForeignKey(c => c.CategoryId)
+                .OnDelete(DeleteBehavior.NoAction);
 
         }
     }

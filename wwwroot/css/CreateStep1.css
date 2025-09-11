@@ -1,0 +1,57 @@
+﻿:root {
+    --udemy-primary: #a435f0;
+    --udemy-secondary: #1c1d1f;
+    --udemy-accent: #f7f9fa;
+    --udemy-border: #d1d7dc;
+}
+
+body {
+    background-color: var(--udemy-accent);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.progress-header {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.progress-bar-custom {
+    height: 8px;
+    background-color: #e7e7e7;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--udemy-primary), #8710d8);
+    width: 50%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.content-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 32px;
+}
+
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--udemy-primary), #8710d8);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+}

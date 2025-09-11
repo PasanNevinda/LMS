@@ -1,47 +1,159 @@
-﻿@using LMS.ViewModels
+﻿@using LMS.Models.Entities
+@using LMS.ViewModels.CourseEditVM
 @model Step2ViewModel
 
 @{
     ViewData["Title"] = "Create Course - Step 2";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Create a New Course - Step 2</h4>
-                </div>
-                <div class="card-body">
-                    <form asp-action="CreateStep2" method="post">
-                        <div class="mb-3">
-                            <label asp-for="Language" class="form-label">Language</label>
-                            <select asp-for="Language" class="form-select" required>
-                                <option value="">-- Select a Language --</option>
-                                <option value="English">English</option>
-                                <option value="Sinhala">Sinhala</option>
-                                <option value="Tamil">Tamil</option>
-                            </select>
-                            <span asp-validation-for="Language" class="text-danger"></span>
-                        </div>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/CreateStep2.css" />
 
-                        <div class="mb-3">
-                            <label asp-for="Description" class="form-label">Course Description</label>
-                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter course description"></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="CreateStep1" class="btn btn-secondary">
-                                <i class="bi bi-arrow-left"></i> Back
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                Next <i class="bi bi-arrow-right"></i>
-                            </button>
-                        </div>
-                    </form>
+<div class="main-container">
+    <!-- Progress Header -->
+    <div class="progress-header">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0 text-dark fw-bold">Create Your Course</h2>
+            <div class="d-flex align-items-center gap-2">
+                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width:24px; height:24px;">
+                    <i class="bi bi-check"></i>
                 </div>
+                <span>Step 2 of 2</span>
             </div>
+        </div>
+        <div class="progress-bar-custom">
+            <div class="progress-fill"></div>
+        </div>
+        <p class="text-muted mb-0">Complete your course details to submit for review</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Sidebar Navigation -->
+        <div class="col-lg-3">
+            <div class="sidebar">
+                <div class="sidebar-header">Course Sections</div>
+                <nav class="sidebar-nav">
+                    <a href="#" class="nav-link active" data-section="basics"><i class="bi bi-info-circle"></i> Basics</a>
+                    <a href="#" class="nav-link" data-section="curriculum"><i class="bi bi-list-ul"></i> Curriculum</a>
+                    <a href="#" class="nav-link" data-section="language"><i class="bi bi-translate"></i> Language</a>
+                    <a href="#" class="nav-link" data-section="category"><i class="bi bi-tags"></i> Category</a>
+                    <a href="#" class="nav-link" data-section="pricing"><i class="bi bi-currency-dollar"></i> Pricing</a>
+                    <a href="#" class="nav-link" data-section="audience"><i class="bi bi-people"></i> Target Audience</a>
+                    <a href="#" class="nav-link" data-section="image"><i class="bi bi-image"></i> Course Image</a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="col-lg-9">
+            <form asp-action="CreateStep2" method="post" enctype="multipart/form-data" class="content-area">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="CourseId" />
+                <input type="hidden" asp-for="Status" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <!-- Basics -->
+                <div class="section-content active" id="basics-content">
+                    <h3>Course Basics</h3>
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Curriculum -->
+                <div class="section-content" id="curriculum-content">
+                    <h3>Curriculum</h3>
+                    <textarea asp-for="Curriculum" class="form-control" rows="8"></textarea>
+                    <span asp-validation-for="Curriculum" class="text-danger"></span>
+                </div>
+
+                <!-- Language -->
+                <div class="section-content" id="language-content">
+                    <h3>Language</h3>
+                    <select asp-for="Language" class="form-select"
+                            asp-items="Html.GetEnumSelectList<Language>()">
+                        <option value="">-- Select Language --</option>
+                    </select>
+                    <span asp-validation-for="Language" class="text-danger"></span>
+                </div>
+
+                <!-- Category -->
+                <div class="section-content" id="category-content">
+                    <h3>Category</h3>
+                    <select asp-for="CategoryId" class="form-select"
+                            asp-items="@(new SelectList(Model.Categories, "Id", "Name", Model.CategoryId))">
+                        <option value="">-- Select a Category --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <!-- Pricing -->
+                <div class="section-content" id="pricing-content">
+                    <h3>Pricing</h3>
+                    <input asp-for="Price" type="number" step="0.01" min="0" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <!-- Target Audience -->
+                <div class="section-content" id="audience-content">
+                    <h3>Target Audience</h3>
+                    <textarea asp-for="TargetAudiance" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="TargetAudiance" class="text-danger"></span>
+                </div>
+
+                <!-- Image -->
+                <div class="section-content" id="image-content">
+                    <h3>Course Image</h3>
+                    @if (!string.IsNullOrEmpty(Model.ImagePath))
+                    {
+                        <img src="@Model.ImagePath" alt="Course Image" style="max-width:200px;" class="mb-2" />
+                    }
+                    <input asp-for="DisplayImage" type="file" class="form-control" />
+                    <span asp-validation-for="DisplayImage" class="text-danger"></span>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <div class="text-muted"><i class="bi bi-info-circle"></i> You can save as draft and continue later</div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" name="action" value="save" class="btn btn-secondary-custom">
+                            <i class="bi bi-save me-2"></i>Save Draft
+                        </button>
+                        <button type="submit" name="action" value="submit" class="btn btn-primary-custom"
+                                onclick="return confirm('Are you sure you want to submit this course for review?');">
+                            <i class="bi bi-send me-2"></i>Submit for Review
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Sidebar navigation switching
+        document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-nav .nav-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                const sectionId = this.getAttribute('data-section') + '-content';
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+    </script>
+}

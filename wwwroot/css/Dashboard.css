@@ -1,0 +1,134 @@
+﻿/* Sidebar CSS: fixed width and hover expand */
+#sidebar {
+    width: 60px;
+    transition: width 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+    #sidebar:hover {
+        width: 220px;
+    }
+
+    /* Style for links inside sidebar */
+    #sidebar .nav-link {
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 15px 20px;
+        border-radius: 0;
+        transition: all 0.3s ease;
+    }
+
+        #sidebar .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        #sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.2);
+            border-right: 3px solid #fff;
+        }
+
+        #sidebar .nav-link i {
+            font-size: 1.4rem;
+            width: 24px;
+            text-align: center;
+        }
+
+    /* Text label for each link, hidden by default */
+    #sidebar .link-text {
+        opacity: 0;
+        margin-left: 15px;
+        transition: opacity 0.3s ease;
+        display: inline-block;
+        font-weight: 500;
+    }
+
+    /* Show label text on hover */
+    #sidebar:hover .link-text {
+        opacity: 1;
+    }
+
+/* Main content area adjustment */
+.main-content {
+    margin-left: 60px;
+    transition: margin-left 0.3s ease;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+/* Course card styling */
+.course-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .course-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+.course-image {
+    height: 120px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+}
+
+.course-status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+.progress-bar-custom {
+    height: 4px;
+    background-color: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+/* Tab styling */
+.nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+    font-weight: 500;
+    padding: 12px 20px;
+}
+
+    .nav-tabs .nav-link.active {
+        color: #495057;
+        background-color: transparent;
+        border-bottom: 2px solid #007bff;
+    }
+
+.search-section {
+    background: white;
+    padding: 30px 0;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px 0;
+    margin-bottom: 0;
+}

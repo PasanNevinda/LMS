@@ -1,0 +1,126 @@
+﻿@model List<LMS.ViewModels.Dashboard.CourseVm>
+
+@if (Model?.Any() == true)
+{
+    <div class="row">
+        @foreach (var course in Model)
+        {
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card course-card h-100" data-course-id="@course.CourseId">
+                    <div class="position-relative">
+                        <!-- Course Image -->
+                        @if (!string.IsNullOrEmpty(course.ImagePath))
+                        {
+                            <img src="@course.ImagePath" class="card-img-top" style="height: 120px; object-fit: cover;" alt="@course.Title">
+                        }
+                        else
+                        {
+                            <div class="course-image" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                        }
+
+                        <!-- Status Badge -->
+                        <span class="badge bg-success course-status-badge">Approved</span>
+                    </div>
+
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title course-title mb-2 text-truncate">@course.Title</h6>
+
+                        @* <!-- Course Stats -->
+                        <div class="row text-center mb-3">
+                            <div class="col-4">
+                                <div class="small text-muted">Students</div>
+                                <div class="fw-bold">147</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Rating</div>
+                                <div class="fw-bold">
+                                    4.8 <i class="bi bi-star-fill text-warning" style="font-size: 0.8rem;"></i>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="small text-muted">Revenue</div>
+                                <div class="fw-bold">$2.4k</div>
+                            </div>
+                        </div> *@
+
+                        <!-- Progress Section -->
+                        <div class="mb-3 mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <small class="text-muted">Course Health</small>
+                                <small class="text-muted">@course.Progress%</small>
+                            </div>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill bg-success" style="width: @course.Progress%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2">
+                            <a 
+                               asp-action="Details" asp-controller="Course" asp-route-id="@course.CourseId"
+                               class="btn btn-outline-success btn-sm flex-fill">
+                                <i class="bi bi-gear me-1"></i>Edit and Publish
+                            </a>
+
+                            <a href="@Url.Action("Manage", "Course", new { id = course.CourseId })"
+                               class="btn btn-outline-success btn-sm flex-fill">
+                                <i class="bi bi-gear me-1"></i>Delete
+                            </a>
+                            @* <a href="@Url.Action("Analytics", "Course", new { id = course.CourseId })"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-graph-up"></i>
+                            </a> *@
+                            @* <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("ViewPublic", "Course", new { id = course.CourseId })" target="_blank">
+                                            <i class="bi bi-box-arrow-up-right me-2"></i>View Public Page
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("Students", "Course", new { id = course.CourseId })">
+                                            <i class="bi bi-people me-2"></i>View Students
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("Reviews", "Course", new { id = course.CourseId })">
+                                            <i class="bi bi-star me-2"></i>Reviews & Ratings
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("Unpublish", "Course", new { id = course.CourseId })"
+                                           onclick="return confirm('Are you sure you want to unpublish this course?')">
+                                            <i class="bi bi-eye-slash me-2"></i>Unpublish
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div> *@
+                        </div>
+
+                        <!-- Published Date -->
+                        <small class="text-muted mt-2">Accepted at @course.ReviewdAt.ToString("MMM dd, yyyy")</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-trophy" style="font-size: 4rem; color: #dee2e6;"></i>
+        </div>
+        <h4 class="text-muted mb-3">No published courses yet</h4>
+        <p class="text-muted mb-4">Complete and submit your courses for review to get them published.</p>
+        <a asp-controller="Course" asp-action="Index" class="btn btn-success">
+            <i class="bi bi-rocket-takeoff me-2"></i>Publish Your First Course
+        </a>
+    </div>
+}

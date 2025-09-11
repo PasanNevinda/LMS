@@ -130,7 +130,9 @@ namespace LMS.Controllers
             if (model.Files == null )
             {
                 ModelState.AddModelError("", "Please select one or more files.");
+
                 return View(model);
+
             }
 
             var uploadedCount = 0;

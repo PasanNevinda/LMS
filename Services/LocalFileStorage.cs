@@ -10,12 +10,14 @@
     public class LocalFileStorage : IFileStorage
     {
         private readonly IWebHostEnvironment _env;
-        private static readonly string[] _permittedExtensions = { ".pdf", ".docx", ".doc", ".pptx", ".ppt", ".mp4", ".jpg", ".jpeg" };
+        private static readonly string[] _permittedExtensions = { ".pdf", ".docx", ".doc", ".pptx", ".ppt", ".mp4", ".jpg", ".jpeg", ".png" };
         private static readonly string[] _permittedContentTypes = {
         "application/pdf", "application/msword",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "video/mp4", "image/jpeg"
+        "video/mp4", 
+        "image/jpeg",
+        "image/png"
     };
 
         public LocalFileStorage(IWebHostEnvironment env)
@@ -43,7 +45,7 @@
             // Classify file by extension
             string category = ext switch
             {
-                ".jpg" or ".jpeg" => "Images",
+                ".jpg" or ".jpeg" or ".png" => "Images",
                 ".mp4" => "Videos",
                 _ when new[] { ".pdf", ".docx", ".doc", ".pptx", ".ppt" }.Contains(ext) => "Documents",
                 _ => "Others"

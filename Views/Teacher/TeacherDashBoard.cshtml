@@ -1,0 +1,222 @@
+﻿@using LMS.ViewModels.Dashboard
+@model TeacherDashboardViewModel
+@{
+    ViewData["Title"] = "Teacher Dashboard";
+    Layout = "_Layout";
+}
+
+<link rel="stylesheet" href="~/css/Dashboard.css" />
+
+<div class="d-flex">
+    <!-- Sidebar navigation -->
+    <nav id="sidebar" class="bg-dark text-white">
+        <div class="p-3">
+            <div class="d-flex align-items-center mb-4">
+                <i class="bi bi-mortarboard-fill" style="font-size: 1.8rem;"></i>
+                <span class="link-text ms-3 h5 mb-0">LMS</span>
+            </div>
+        </div>
+
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link text-white d-flex align-items-center active" href="@Url.Action("Dashboard", "Teacher")" aria-label="Dashboard">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span class="link-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white d-flex align-items-center" href="@Url.Action("Courses", "Teacher")" aria-label="Courses">
+                    <i class="bi bi-journal-bookmark"></i>
+                    <span class="link-text">My Courses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white d-flex align-items-center" href="@Url.Action("Assignments", "Teacher")" aria-label="Assignments">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span class="link-text">Assignments</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white d-flex align-items-center" href="@Url.Action("Students", "Teacher")" aria-label="Students">
+                    <i class="bi bi-people-fill"></i>
+                    <span class="link-text">Students</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white d-flex align-items-center" href="@Url.Action("Analytics", "Teacher")" aria-label="Analytics">
+                    <i class="bi bi-graph-up"></i>
+                    <span class="link-text">Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item mt-auto" style="position: absolute; bottom: 60px; width: 100%;">
+                <a class="nav-link text-white d-flex align-items-center" href="@Url.Action("Profile", "Teacher")" aria-label="Profile">
+                    <i class="bi bi-person-circle"></i>
+                    <span class="link-text">Profile</span>
+                </a>
+            </li>
+            <li class="nav-item" style="position: absolute; bottom: 0; width: 100%;">
+                <a class="nav-link text-white d-flex align-items-center" href="@Url.Action("Settings", "Teacher")" aria-label="Settings">
+                    <i class="bi bi-gear-fill"></i>
+                    <span class="link-text">Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main content area -->
+    <div class="main-content w-100">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="container-fluid px-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="mb-2">Courses</h1>
+                        <p class="mb-0 opacity-75">Manage and track your course content</p>
+                    </div>
+                    <div>
+                        <!-- need to be correct upload content -->
+                        <button type="button" class="btn btn-light btn-lg me-2" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                            <i class="bi bi-cloud-upload me-2"></i>Upload Content
+                        </button>
+                        <a asp-controller="Course" asp-action="CreateStep1" class="btn btn-warning btn-lg">
+                            <i class="bi bi-plus-circle me-2"></i>New Course
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="container-fluid px-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="position-relative">
+                            <input type="text" class="form-control form-control-lg" placeholder="Search your courses" id="courseSearch">
+                            <button class="btn btn-primary position-absolute top-50 end-0 translate-middle-y me-2" type="button">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-funnel me-2"></i>Newest
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Newest</a></li>
+                                <li><a class="dropdown-item" href="#">Oldest</a></li>
+                                <li><a class="dropdown-item" href="#">A-Z</a></li>
+                                <li><a class="dropdown-item" href="#">Z-A</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Tabs and Content -->
+        <div class="container-fluid px-4">
+            <!-- Course Status Tabs -->
+            <ul class="nav nav-tabs mb-4" id="coursesTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="draft-tab" data-bs-toggle="tab" data-bs-target="#draft" type="button" role="tab">
+                        Draft (@(Model.DraftCourses?.Count ?? 0))
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
+                        Under Review (@(Model.PendingCourses?.Count ?? 0))
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab">
+                        Approved (@(Model.ApprovedCourses?.Count ?? 0))
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab">
+                        Rejected (@(Model.RejectedCourses?.Count ?? 0))
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#published" type="button" role="tab">
+                        Published (@(Model.PublishedCourses?.Count ?? 0))
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="coursesTabContent">
+                <!-- Draft Courses Tab -->
+                <div class="tab-pane fade show active" id="draft" role="tabpanel">
+                     @await Html.PartialAsync("_DraftCoursesPartial.cshtml", Model.DraftCourses) 
+
+                </div>
+
+                <!-- Pending Courses Tab -->
+                <div class="tab-pane fade" id="pending" role="tabpanel">
+                    @await Html.PartialAsync("_PendingCoursesPartial.cshtml", Model.PendingCourses)
+                </div>
+
+                <!-- Approved Courses Tab -->
+                <div class="tab-pane fade" id="approved" role="tabpanel">
+                    @await Html.PartialAsync("_ApprovedCoursesPartial.cshtml", Model.ApprovedCourses)
+                </div>
+
+                <!-- Rejected Courses Tab -->
+                <div class="tab-pane fade" id="rejected" role="tabpanel">
+                    @await Html.PartialAsync("_RejectedCoursesPartial.cshtml", Model.RejectedCourses)
+                </div>
+
+                <!-- Published Courses Tab -->
+                <div class="tab-pane fade" id="published" role="tabpanel">
+                    @await Html.PartialAsync("_PublishedCoursesPartial.cshtml", Model.PublishedCourses)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Content Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload Course Content</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Choose the type of content you want to upload:</p>
+                <div class="d-grid gap-2">
+                    <a asp-controller="Content" asp-action="ContentUpload" class="btn btn-outline-primary">
+                        <i class="bi bi-file-earmark-play me-2"></i>Video Content
+                    </a>
+                    <a asp-controller="Content" asp-action="DocumentUpload" class="btn btn-outline-primary">
+                        <i class="bi bi-file-earmark-pdf me-2"></i>Documents
+                    </a>
+                    <a asp-controller="Content" asp-action="QuizUpload" class="btn btn-outline-primary">
+                        <i class="bi bi-question-circle me-2"></i>Quiz/Assessment
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Course search functionality
+    document.getElementById('courseSearch').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const courseCards = document.querySelectorAll('.course-card');
+
+        courseCards.forEach(card => {
+            const title = card.querySelector('.course-title').textContent.toLowerCase();
+            if (title.includes(searchTerm)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+</script>
