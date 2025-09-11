@@ -2,10 +2,13 @@
 @model TeacherDashboardViewModel
 @{
     ViewData["Title"] = "Teacher Dashboard";
-    Layout = "_Layout";
+    Layout = null;
 }
 
 <link rel="stylesheet" href="~/css/Dashboard.css" />
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/LMS.styles.css" asp-append-version="true" />
 
 <div class="d-flex">
     <!-- Sidebar navigation -->
@@ -220,3 +223,7 @@
         });
     });
 </script>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>

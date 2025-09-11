@@ -246,23 +246,46 @@ namespace LMS.Controllers
         }
 
         [HttpGet]
-        public IActionResult CreateModule(int CourseId)
+        public async Task<IActionResult> CreateorEditModule(int CourseId, int ModuleId)
         {
-            var vm = new  ModuleVm{ CourseId = CourseId };
+            ModuleVm vm;
+            if (ModuleId > 0)
+            {
+                var module = await _courseService.GetModuleByIdAsync(ModuleId);
+                if (module == null)
+                    return NotFound();
+
+                vm = new ModuleVm
+                {
+
+                    CourseId = module.CourseId,
+                    Id = module.ModuleId,
+                    Name = module.Name,
+                    Description = module.Description
+                };
+            }
+            else
+                vm = new ModuleVm { CourseId = CourseId };
+
             return PartialView("_ModuleFormPartial", vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateModule(ModuleVm vm)
+        public async Task<IActionResult> CreateorEditModule(ModuleVm vm)
         {
             if(!ModelState.IsValid)
             {
                 return PartialView("_ModuleFormPartial", vm);
             }
 
-           var module = await _courseService.CreateModuleAsync(vm);
+            if(vm.Id == 0)
+            {
+                var module = await _courseService.CreateModuleAsync(vm);
+                return PartialView("_ModulePartial", vm);
+            }
 
+            var updatedModule = await _courseService.UpdateModuleAsync(vm);
             return PartialView("_ModulePartial", vm);
         }
     }

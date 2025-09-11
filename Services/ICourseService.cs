@@ -19,5 +19,8 @@ namespace LMS.Services
         Task<bool> DeleteCourseAsync(int courseId, string teacherId);
 
         Task<Module> CreateModuleAsync(ModuleVm moduleViewModel);
+
+        Task<Module> GetModuleByIdAsync(int moduleId);
+        Task<Module> UpdateModuleAsync(ModuleVm vm);
     }
 }
