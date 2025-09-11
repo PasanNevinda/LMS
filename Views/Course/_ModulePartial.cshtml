@@ -1,7 +1,7 @@
 ﻿@model LMS.ViewModels.CourseDetailsVms.ModuleVm
 
 <!-- Module Card -->
-<div class="module-card" data-module-id="@Model.Id">
+<div class="module-card" id="module-@Model.Id" data-module-id="@Model.Id">
     <div class="module-header" onclick="toggleModule(@Model.Id)">
         <div class="module-title">
             <i class="fas fa-play-circle text-primary"></i>
@@ -12,7 +12,7 @@
         </div>
         <div class="d-flex align-items-center">
             <div class="module-actions">
-                <button class="btn-sm-icon btn-edit" onclick="event.stopPropagation(); editModule(@Model.Id)" title="Edit Module">
+                <button class="btn-sm-icon btn-edit" onclick="event.stopPropagation(); openAddModuleModal(@Model.CourseId, @Model.Id);" title="Edit Module">
                     <i class="fas fa-edit"></i>
                 </button>
                 <button class="btn-sm-icon btn-delete" onclick="event.stopPropagation(); deleteModule(@Model.Id)" title="Delete Module">

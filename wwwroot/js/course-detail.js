@@ -66,11 +66,16 @@ function toggleContentFields() {
 }
 
 
-function openAddModuleModal(courseId) {
-    fetch(`/Course/CreateModule?CourseId=${courseId}`, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-        .then(response => response.text())
+function openAddModuleModal(courseId, moduleId = 0) {
+    const url = `/Course/CreateorEditModule?CourseId=${courseId}&ModuleId=${moduleId}`;
+
+    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' }})   
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server returned ${response.status}`);
+            }
+            return response.text();
+        })
         .then(html => {
             document.getElementById('module-form-body').innerHTML = html;
 
@@ -92,6 +97,8 @@ function openAddModuleModal(courseId) {
 function submitAddModuleForm(form, modal) {
     const formData = new FormData(form);
 
+    const moduleId = parseInt(form.querySelector('[name="Id"]').value);
+
     fetch(form.action, {
         method: "POST",
         body: formData,
@@ -110,8 +117,15 @@ function submitAddModuleForm(form, modal) {
                     submitAddModuleForm(newForm, modal);
                 });
             } else {
-                // ✅ Success → append new module partial
-                document.getElementById("modulesList").insertAdjacentHTML("beforeend", html);
+
+                if (moduleId === 0) {
+                    // Add new module
+                    document.getElementById("modulesList").insertAdjacentHTML("beforeend", html);
+                } else {
+                    // Replace updated module
+                    const moduleEl = document.getElementById(`module-${moduleId}`);
+                    if (moduleEl) moduleEl.outerHTML = html;
+                }
 
                 // Hide modal
                 modal.hide();

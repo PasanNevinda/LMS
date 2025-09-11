@@ -80,6 +80,14 @@ namespace LMS.Services
                 .FirstOrDefaultAsync(c => c.CourseId == courseId);
         }
 
+        public async Task<Module> GetModuleByIdAsync(int moduleId)
+        {
+            return await _context.Modules
+                .Include(m => m.ModuleContentItems)
+                    .ThenInclude(mci => mci.ContentItem)
+                .FirstOrDefaultAsync(m => m.ModuleId == moduleId);
+        }
+
         public async Task<List<Course>> GetPendingCoursesAsync()
         {
             return await _context.Courses
@@ -159,6 +167,17 @@ namespace LMS.Services
 
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<Module> UpdateModuleAsync(ModuleVm vm)
+        {
+            var module = await _context.Modules.FirstOrDefaultAsync(m => m.ModuleId == vm.Id);
+            module.Name = vm.Name;
+            module.Description = vm.Description;
+            module.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return module;
         }
     }
 }
