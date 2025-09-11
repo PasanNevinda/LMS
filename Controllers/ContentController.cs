@@ -4,9 +4,11 @@ using LMS.Models.Entities;
 using LMS.Services;
 using LMS.ViewModels;
 using LMS.ViewModels.ContentVMs;
+using LMS.ViewModels.CourseDetailsVms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
 namespace LMS.Controllers
@@ -117,21 +119,24 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult ContentUpload()
         {
-            return View();
+            var model = new ContentUploadVM {};
+            return View("ContentUpload",model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ContentUpload(List<IFormFile> files)
+        public async Task<IActionResult> ContentUpload(ContentUploadVM model)
         {
-            if (files == null || files.Count == 0)
+            if (model.Files == null )
             {
                 ModelState.AddModelError("", "Please select one or more files.");
-                return View("ContentUpload");
+
+                return View(model);
+
             }
 
             var uploadedCount = 0;
-            foreach (var file in files)
+            foreach (var file in model.Files)
             {
                 try
                 {
@@ -173,6 +178,20 @@ namespace LMS.Controllers
             await _db.SaveChangesAsync();
             ViewData["Result"] = $"{uploadedCount} file(s) uploaded successfully.";
             return View("ContentUpload");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var fileRecord = await _db.ContentItems.FindAsync(id);
+            if (fileRecord == null) return View();
+
+            await _fileStorage.DeleteFileAsync(fileRecord.FilePath);
+
+            _db.ContentItems.Remove(fileRecord);
+            await _db.SaveChangesAsync();
+
+            return View();
         }
     }
 
