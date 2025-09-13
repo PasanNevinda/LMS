@@ -75,16 +75,14 @@ namespace LMS.Services
                 .Include(c => c.Teacher)
                 .Include(c => c.Category)
                 .Include(c => c.Modules)
-                    .ThenInclude(m => m.ModuleContentItems)
-                        .ThenInclude(mci => mci.ContentItem)
+                    .ThenInclude(m => m.ContentItems)
                 .FirstOrDefaultAsync(c => c.CourseId == courseId);
         }
 
         public async Task<Module> GetModuleByIdAsync(int moduleId)
         {
             return await _context.Modules
-                .Include(m => m.ModuleContentItems)
-                    .ThenInclude(mci => mci.ContentItem)
+                .Include(m => m.ContentItems)
                 .FirstOrDefaultAsync(m => m.ModuleId == moduleId);
         }
 

@@ -157,13 +157,13 @@ namespace LMS.Controllers
                     // Record metadata in database
                     var record = new ContentItem
                     {
-                        Title = Path.GetFileName(file.FileName),
+                       // Title = Path.GetFileName(file.FileName),
                         FilePath = relativePath,
                         //ContentType = file.ContentType,
                         //Size = file.Length,
                         CreatedAt = DateTime.UtcNow,
                         Description = Path.GetFileName(file.FileName),
-                        TeacherId = TID
+                       // TeacherId = TID
                     };
                     _db.ContentItems.Add(record);
                     uploadedCount++;

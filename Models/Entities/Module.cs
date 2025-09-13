@@ -26,6 +26,6 @@ namespace LMS.Models.Entities
 
         // Navigation Properties
         public Course Course { get; set; }
-        public ICollection<ModuleContentItem> ModuleContentItems { get; set; } = new List<ModuleContentItem>();
+        public ICollection<ContentItem> ContentItems { get; set; } = new List<ContentItem>();
     }
 }

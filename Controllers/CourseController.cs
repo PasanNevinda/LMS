@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Identity.Client;
+using Newtonsoft.Json;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace LMS.Controllers
 {
@@ -201,7 +203,7 @@ namespace LMS.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var course = await _courses.GetByIdAsync(id, new QueryOptions<Course> { Includes = "Modules, Modules.ModuleContentItems, Modules.ModuleContentItems.ContentItem" });
+            var course = await _courses.GetByIdAsync(id, new QueryOptions<Course> { Includes = "Modules, Modules.ContentItems" });
             if (course == null)
                 return NotFound();
 
@@ -222,21 +224,21 @@ namespace LMS.Controllers
                     CourseId = m.CourseId,
                     Name = m.Name,
                     Description = m.Description,
-                    Items = m.ModuleContentItems
+                    Items = m.ContentItems
                     .OrderBy(x => x.OrderNo)
                     .Select(x => new ModuleContentItemVm
                     {
-                       Id = x.ModuleId,
-                       ContentItemId = x.ContentItemId,
-                       DisplayName = x.DisplayName,
-                       Kind = x.ContentItem switch
-                       {
-                           DocumentContent => "Document",
-                            VideoContent => "Video",
-                            LinkContent => "Link",
-                            _ => "Unknown"
-                       },
-                       FilePath = x.ContentItem.FilePath
+                       ModuleId = x.ModuleId,
+                       ContentItemId = x.Id,
+                       DisplayName = x.StageName,
+                       //Kind = x.ContentItem switch
+                       //{
+                       //    DocumentContent => "Document",
+                       //     VideoContent => "Video",
+                       //     LinkContent => "Link",
+                       //     _ => "Unknown"
+                       //},
+                       FilePath = x.FilePath,
                     }).ToList()
                 }).ToList()
             };
@@ -268,6 +270,93 @@ namespace LMS.Controllers
                 vm = new ModuleVm { CourseId = CourseId };
 
             return PartialView("_ModuleFormPartial", vm);
+        }
+        [HttpGet]
+        public async Task<IActionResult> AddItem(int CourseId, int ModuleId)
+        {
+            ViewModels.CourseDetailsVms.ContentUploadVm vm;
+            if (ModuleId > 0)
+            {
+                var module = await _courseService.GetModuleByIdAsync(ModuleId);
+                if (module == null)
+                    return NotFound();
+
+                vm = new ViewModels.CourseDetailsVms.ContentUploadVm
+                {
+
+                    CourseId = module.CourseId,
+                    ModuleId = module.ModuleId,
+                    Name = module.Name,
+                    Description = module.Description
+                };
+            }
+            else
+                vm = new ViewModels.CourseDetailsVms.ContentUploadVm { CourseId = CourseId };
+
+            return PartialView("_ContentFormPartial", vm);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddContent(ViewModels.CourseDetailsVms.ContentUploadVm model) {
+
+            
+            if (model.Files == null)
+            {
+                ModelState.AddModelError("", "Please select one or more files.");
+
+                return View(model);
+
+            }
+
+            var uploadedCount = 0;
+            var stageNames = JsonConvert.DeserializeObject<Dictionary<string, string>>(model.StagenameMap);
+            string originalFileName;
+            string customName;
+            foreach (var file in model.Files)
+            {
+                try
+                {
+                    if (file.Length == 0) continue;
+
+                    // Optional: limit file size (e.g. 50MB max)
+                    const long fileLimit = 50 * 1024 * 1024;
+                    if (file.Length > fileLimit)
+                    {
+                        ModelState.AddModelError("", $"File '{file.FileName}' exceeds the maximum allowed size.");
+                        continue;
+                    }
+
+                    // Save file to local storage
+                    string relativePath = await _fileStorage.SaveFileAsync(file);
+                    var TID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    originalFileName = file.FileName;
+                    customName = stageNames[originalFileName];
+                    // Record metadata in database
+                    var record = new ContentItem
+                    {
+                        FilePath = relativePath,
+                        //ContentType = file.ContentTyp
+                        ModuleId = model.ModuleId,
+                        //Size = file.Length,
+                        CreatedAt = DateTime.UtcNow,
+                        Description = Path.GetFileName(file.FileName),
+                        //TeacherId = TID,
+                        StageName = customName,
+                        
+                    };
+                    _context.ContentItems.Add(record);
+                    uploadedCount++;
+                }
+                catch (Exception ex)
+                {
+                    // Log exception (omitted) and inform user
+                    ModelState.AddModelError("", $"Error uploading '{file.FileName}': {ex.Message}");
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            ViewData["Result"] = $"{uploadedCount} file(s) uploaded successfully.";
+            return Json(new { success = true, message = "Upload complete!" });
+
         }
 
         [HttpPost]

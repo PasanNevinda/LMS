@@ -1,0 +1,28 @@
+﻿@using LMS.ViewModels.CourseDetailsVms
+
+@model ContentUploadVm
+@{
+    
+}
+<div id="ContentDiv">
+<h3>Upload Multiple Files</h3>
+
+<form id="addContentForm" enctype="multipart/form-data">
+    <input type="hidden" asp-for="CourseId" />
+    <input type="hidden" asp-for="ModuleId" />
+  <div class="mb-3">
+    <label for="fileInput" class="form-label">Select files</label>
+    <input type="file" id="fileInput" name="files" class="form-control" multiple>
+  </div>
+
+  <ul id="fileList" class="list-group mb-3">
+      
+  </ul>
+
+  <table  id="fileListtable" class="table table-bordered">
+      
+  </table>
+
+  <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
