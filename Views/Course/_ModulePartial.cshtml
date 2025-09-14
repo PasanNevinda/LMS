@@ -66,11 +66,16 @@
             }
         </ul>
 
-        @* <div class="p-3 text-center border-top" style="display: none;">
-            <button class="btn btn-outline-success" onclick="showAddItemModal(@Model.Id)">
+         <div class="p-3 text-center border-top" style="display: none;">
+            <button class="btn btn-outline-success" onclick="showAddItemModal(@Model.CourseId,@Model.Id)">
                 <i class="fas fa-plus me-2"></i>
                 Add Content Item
             </button>
-        </div> *@
+        </div> 
     </div>
 </div>
+
+<script src="/js/course-detail.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>

@@ -142,6 +142,130 @@ function submitAddModuleForm(form, modal) {
         });
 }
 
+function showAddItemModal(courseId,moduleId) {
+
+    const url = `/Course/AddItem?CourseId=${courseId}&ModuleId=${moduleId}`;
+
+    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server returned ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(html => {
+            document.getElementById('content-form-body').innerHTML = html;
+            
+            const modalEl = document.getElementById('content-form-model');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+
+            const form = document.getElementById('addContentForm');
+            const fileInput = document.getElementById('fileInput');
+            
+            
+       /*     fileInput.addEventListener('change', () => {
+                // Clear previous list
+             
+                    
+                });
+            });*/
+            // const fileInput = document.getElementById('fileInput');
+            
+            fileInput.addEventListener('change', () => {
+               // console.log(document.getElementById('fileInput'));
+                refreshTable(fileInput.files);
+            });
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const stagenameMap = {};
+               
+                Array.from(fileInput.files).forEach((file, index) => {
+                    // Find the custom name input for this index
+                    const customInput = document.querySelector(`input[data-index='${index}']`);
+                    const stageName = customInput && customInput.value
+                        ? customInput.value
+                        : file.name;
+                    stagenameMap[file.name] = stageName;
+                    // Append with custom name
+                    formData.append("files", file);
+                });
+                formData.append("stagenameMap", JSON.stringify(stagenameMap));
+                // submitAddModuleForm(formData, modal);
+                //formData.append("__RequestVerificationToken", document.querySelector('input[name="__RequestVerificationToken"]').value);
+                //AJAX part
+                fetch('/Course/AddContent', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(res => res.json())
+                    .then(result => {
+                        alert("Upload success!");
+                        modal?.hide(); // if inside a modal
+                    })
+                    .catch(err => console.error(err));
+            });
+            
+        })
+        .catch(err => console.error("Error loading content form:", err));
+
+}
+
+function refreshTable(files) {
+    fileList.innerHTML = '';
+    fileListtable.innerHTML = '';
+
+    Array.from(fileInput.files).forEach((file, index) => {
+        const tr = document.createElement('tr');
+        const td_file = document.createElement('td');
+        const td_rm_btn = document.createElement('td');
+        const customCell = document.createElement('td');
+        const rm_btn = document.createElement('button');
+
+        rm_btn.textContent = "Remove";
+        rm_btn.className = "btn btn-sm btn-danger";
+        rm_btn.addEventListener('click', () => removeFile(index));
+
+        td_rm_btn.appendChild(rm_btn);
+
+        const customInput = document.createElement('input');
+        customInput.type = "text";
+        customInput.className = "form-control";
+        customInput.placeholder = "Enter stage name for this file";
+        customInput.dataset.index = index;
+        customCell.appendChild(customInput);
+
+        tr.className = 'table-group';
+        // td1.className = 'table-group';
+        // td2.className = 'table-group';
+        td_file.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+
+        tr.appendChild(td_file);
+        tr.appendChild(customCell)
+        tr.appendChild(td_rm_btn);
+        fileListtable.appendChild(tr);
+    });
+}
+
+function removeFile(indexToRemove) {
+    const dt = new DataTransfer();
+    Array.from(fileInput.files).forEach((file, index) => {
+        if (index !== indexToRemove) {
+            dt.items.add(file);
+        }
+    });
+    fileInput.files = dt.files;
+    refreshTable(fileInput.files);
+}
+
+
+
+
+
+
 // Initialize edit mode toggle
 document.getElementById('toggleEditMode').addEventListener('click', toggleEditMode);
 
