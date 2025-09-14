@@ -66,8 +66,8 @@ namespace LMS.Services
                 else
                 {
                     logger.LogInformation("Admin user already exists.");
-                    //adminUser.EmailConfirmed = true;
-                    //await userManager.UpdateAsync(adminUser);
+                    adminUser.EmailConfirmed = true;
+                    await userManager.UpdateAsync(adminUser);
                 }
 
             }
