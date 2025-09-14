@@ -34,9 +34,6 @@ namespace LMS.Data
       //  public DbSet<DocumentContent> DocumentContents { get; set; }
        // public DbSet<LinkContent> LinkContents { get; set; }
 
-        public DbSet<ModuleContentItem> ModuleContentItems { get; set; }
-
-
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -96,19 +93,19 @@ namespace LMS.Data
                 .HasForeignKey(e => e.CourseId)
                  .OnDelete(DeleteBehavior.NoAction); 
 
-            // ModuleContentItem relationship
-            builder.Entity<ModuleContentItem>()
-                .HasKey(mci => new { mci.ModuleId, mci.ContentItemId });
+            //// ModuleContentItem relationship
+            //builder.Entity<ModuleContentItem>()
+            //    .HasKey(mci => new { mci.ModuleId, mci.ContentItemId });
 
-            builder.Entity<ModuleContentItem>().HasOne(mci => mci.Module)
-                .WithMany(m => m.ModuleContentItems)
-                .HasForeignKey(mci => mci.ModuleId)
-                .OnDelete(DeleteBehavior.NoAction);
+            //builder.Entity<ModuleContentItem>().HasOne(mci => mci.Module)
+            //    .WithMany(m => m.ModuleContentItems)
+            //    .HasForeignKey(mci => mci.ModuleId)
+            //    .OnDelete(DeleteBehavior.NoAction);
 
-            builder.Entity<ModuleContentItem>().HasOne(mci => mci.ContentItem)
-                .WithMany(c => c.ModuleContentItems)
-                .HasForeignKey(mci => mci.ContentItemId)
-                .OnDelete(DeleteBehavior.NoAction);
+            //builder.Entity<ModuleContentItem>().HasOne(mci => mci.ContentItem)
+            //    .WithMany(c => c.ModuleContentItems)
+            //    .HasForeignKey(mci => mci.ContentItemId)
+            //    .OnDelete(DeleteBehavior.NoAction);
 
             // PreviewCourseQ_A relationship
             builder.Entity<PreviewCourseQ_A>()

@@ -6,20 +6,21 @@ namespace LMS.Models.Entities
     public  class ContentItem
     {
         public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdateTime { get; set; } = DateTime.UtcNow;
 
         public string FilePath { get; set; }     // local path
+        public string StageName { get; set; }
+        public int OrderNo { get; set; } = 0;
 
 
         // Fks
-        [Required, ForeignKey(nameof(Teacher))]
-        public string TeacherId { get; set; } = string.Empty;
+        [Required, ForeignKey(nameof(Module))]
+        public int ModuleId { get; set; }
+
 
         // Navigation Properties
-        public ICollection<ModuleContentItem> ModuleContentItems { get; set; } = new List<ModuleContentItem>();
-        public Teacher Teacher { get; set; }
-
+        public Module Module { get; set; }
     }
 }
