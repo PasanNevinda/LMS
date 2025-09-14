@@ -46,7 +46,8 @@ namespace LMS.Services
                         Email = adminEmail,
                         FullName = "Main Admin",
                         RegistrationTime = DateTime.UtcNow,
-                        IsMainAdmin = true
+                        IsMainAdmin = true,
+                        EmailConfirmed = true
                     };
                     var result = await userManager.CreateAsync(adminUser, adminPassword);
                     if (result.Succeeded)
@@ -65,6 +66,8 @@ namespace LMS.Services
                 else
                 {
                     logger.LogInformation("Admin user already exists.");
+                    adminUser.EmailConfirmed = true;
+                    await userManager.UpdateAsync(adminUser);
                 }
 
             }
