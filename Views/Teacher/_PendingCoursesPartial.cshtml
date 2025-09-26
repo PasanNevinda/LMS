@@ -11,7 +11,12 @@
                         <!-- Course Image -->
                         @if (!string.IsNullOrEmpty(course.ImagePath))
                         {
-                            <img src="@course.ImagePath" class="card-img-top" style="height: 120px; object-fit: cover;" alt="@course.Title">
+                            @* <img src="@course.ImagePath" class="card-img-top" style="height: 120px; object-fit: cover;" alt="@course.Title"> *@
+                            
+                                <img src="@Url.Content("~/" + course.ImagePath)"
+                                     class="card-img-top"
+                                     style="height: 120px; object-fit: cover;"
+                                     alt="@course.Title">
                         }
                         else
                         {

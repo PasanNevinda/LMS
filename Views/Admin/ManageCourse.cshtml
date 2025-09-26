@@ -1,0 +1,52 @@
+﻿@using LMS.ViewModels.Admin_ViewModels
+@model CourseManageVm
+
+@{
+    Layout = "_AdminLayout";
+}
+
+
+@* // here comes filters
+
+// course table partial *@
+
+<!-- Course Management Page -->
+<div class="page-section" id="cours">
+    <div class="dashboard-header">
+        <div class="container-fluid">
+            <h1><i class="bi bi-book-half me-2"></i>Course Management</h1>
+            <p class="mb-0">Review and manage all courses on the platform. <i class="bi bi-funnel ms-2"></i> Filter by status or category.</p>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <!-- Filters -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <label class="form-label"><i class="bi bi-circle-fill me-1"></i>Status</label>
+                <select asp-for="SelectedStatus" class="form-select" id="statusFilter"
+                        asp-items="@Model.AllowdStatus">
+                    <option value="">All Statuses</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label"><i class="bi bi-tags me-1"></i>Category</label>
+                <select asp-for="SelectedCategoryId" class="form-select" id="categoryFilter"
+                        asp-items="@(new SelectList(Model.Categories, "Id", "Name", Model.SelectedCategoryId))">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label"><i class="bi bi-search me-1"></i>Search</label>
+                <input type="search" class="form-control" placeholder="Search courses by name or instructor..." id="courseSearch">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary-custom w-100 mt-4">
+                    <i class="bi bi-search"></i> Filter
+                </button>
+            </div>
+        </div>
+
+        @await Html.PartialAsync("_CourseTable", Model.CourseTable)
+    </div>
+</div>

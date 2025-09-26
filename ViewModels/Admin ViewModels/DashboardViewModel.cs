@@ -15,6 +15,6 @@ namespace LMS.ViewModels.Admin_ViewModels
         public decimal TotalRevenue { get; set; }
         public decimal TotalRevenueIncrease { get; set; }
 
-        public List<Course> RecentCourses { get; set; } = new List<Course>();
+        public List<RecentCourcesVm> RecentCourses { get; set; } = new List<RecentCourcesVm>();
     }
 }

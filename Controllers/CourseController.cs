@@ -103,6 +103,7 @@ namespace LMS.Controllers
 
                 if(!saved)
                 {
+                    TempData["ErrorMessage"] = "Unable to Save, Try again!";
                     ModelState.AddModelError("", "Unable to save to draft. Please try again.");
                     Vm.Categories = await _courseService.GetCategoriesAsync();
                     return View(Vm);
@@ -113,50 +114,54 @@ namespace LMS.Controllers
             }
 
 
-            // manual validation: all must be filled
-            if (string.IsNullOrWhiteSpace(Vm.Name))
-                ModelState.AddModelError("Name", "Course name is required when submitting.");
-            if (string.IsNullOrWhiteSpace(Vm.Description))
-                ModelState.AddModelError("Description", "Course description is required when submitting.");
-            if (string.IsNullOrWhiteSpace(Vm.Curriculum))
-                ModelState.AddModelError("Curriculum", "Course Curriculum is required when submitting.");
-            if (string.IsNullOrWhiteSpace(Vm.TargetAudiance))
-                ModelState.AddModelError("TargetAudiance", "Course TargetAudiance is required when submitting.");
-            if (!Vm.CategoryId.HasValue)
-                ModelState.AddModelError("CategoryId", "Please select a category.");
-
-
-            if (!ModelState.IsValid)
-            {
-                Console.WriteLine("Model state is invalid.");
-                Vm.Categories = await _courseService.GetCategoriesAsync();
-                return View(Vm);
-            }
-
-
-
-            if (Vm.DisplayImage != null)
-            {
-                var imageUrl = await _fileStorage.SaveFileAsync(Vm.DisplayImage);
-                Vm.ImagePath = imageUrl;
-            }
-            else
-                Console.WriteLine("No image uploaded.");
-
-            var success = await _courseService.UpdateCourseDetailsAsync(Vm, userId);
-            if (!success)
-            {
-                ModelState.AddModelError("", "Unable to update course details. Please try again.");
-                return View(Vm);
-            }
 
             if (action == "submit")
             {
+
+                // manual validation: all must be filled
+                if (string.IsNullOrWhiteSpace(Vm.Name))
+                    ModelState.AddModelError("Name", "Course name is required when submitting.");
+                if (string.IsNullOrWhiteSpace(Vm.Description))
+                    ModelState.AddModelError("Description", "Course description is required when submitting.");
+                if (string.IsNullOrWhiteSpace(Vm.Curriculum))
+                    ModelState.AddModelError("Curriculum", "Course Curriculum is required when submitting.");
+                if (string.IsNullOrWhiteSpace(Vm.TargetAudiance))
+                    ModelState.AddModelError("TargetAudiance", "Course TargetAudiance is required when submitting.");
+                if (!Vm.CategoryId.HasValue)
+                    ModelState.AddModelError("CategoryId", "Please select a category.");
+
+
+                if (!ModelState.IsValid)
+                {
+                    Console.WriteLine("Model state is invalid.");
+                    TempData["ErrorMessage"] = "Please fill in all required fields!";
+                    Vm.Categories = await _courseService.GetCategoriesAsync();
+                    return View(Vm);
+                }
+
+
+                if (Vm.DisplayImage != null)
+                {
+                    var imageUrl = await _fileStorage.SaveFileAsync(Vm.DisplayImage);
+                    Vm.ImagePath = imageUrl;
+                }
+                else
+                    Console.WriteLine("No image uploaded.");
+
+                var success = await _courseService.UpdateCourseDetailsAsync(Vm, userId);
+                if (!success)
+                {
+                    TempData["ErrorMessage"] = "Some error happened during submission, please try again";
+                    ModelState.AddModelError("", "Unable to update course details. Please try again.");
+                    Vm.Categories = await _courseService.GetCategoriesAsync();
+                    return View(Vm);
+                }
                 var s = await _courseService.SubmitCourseForReviewAsync(Vm.CourseId, userId);
                 if (!s)
                 {
+                    TempData["ErrorMessage"] = "Some error happened during submission, please try again, (Sending Email)";
                     ModelState.AddModelError("", "Unable to submit course for review. Please try again.");
-                    var categories = await _courseService.GetCategoriesAsync();
+                    Vm.Categories = await _courseService.GetCategoriesAsync();
                     return View(Vm);
                 }
             }

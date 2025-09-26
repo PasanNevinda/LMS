@@ -11,7 +11,7 @@ namespace LMS.Services
         Task<bool> UpdateCourseDetailsAsync(Step2ViewModel model, string teacherId);
         Task<bool> SubmitCourseForReviewAsync(int courseId, string teacherId);
         Task<List<Course>> GetTeacherCoursesAsync(string teacherId);
-        Task<List<Course>> GetPendingCoursesAsync();
+        Task<List<Course>> GetPendingCoursesAsync(int count=0);
         Task<bool> ReviewCourseAsync(int courseId, bool approved, string reviewNotes, string adminId);
         Task<bool> PublishCourseAsync(int courseId, string teacherId);
         Task<List<Category>> GetCategoriesAsync();

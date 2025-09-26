@@ -52,7 +52,7 @@
             };
 
             // Build the target directory (e.g. UploadedFiles/Documents)
-            string basePath = Path.Combine(_env.ContentRootPath, "UploadedFiles");
+            string basePath = Path.Combine(_env.WebRootPath, "uploads");
             string folderPath = Path.Combine(basePath, category);
             Directory.CreateDirectory(folderPath); // Ensures folder exists
 
@@ -64,8 +64,8 @@
             await using var stream = new FileStream(fullPath, FileMode.Create);
             await file.CopyToAsync(stream);
 
-            // Return relative path (e.g. "Documents/{filename}")
-            return Path.Combine(category, safeFileName);
+            // Return relative path (relative to wwwroot)
+            return Path.Combine("uploads",category, safeFileName).Replace("\\", "/");
         }
 
         public async Task<bool> DeleteFileAsync(string filePath)
