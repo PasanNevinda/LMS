@@ -59,15 +59,19 @@ namespace LMS.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManageCourse(int page = 1, int pageSize = 10, CourseStatus? status = null, int? categoryId = null, string? search = null)
+        public async Task<IActionResult> ManageCourse(int page = 1, int pageSize = 5, CourseStatus? status = null, int? categoryId = null, string? search = null)
         {
             
             var query = _context.Courses
                 .Include(c => c.Category)
+                .Include(c =>c.Teacher)
                 .AsQueryable();
 
             if (status != null)
                 query = query.Where(c => c.Status == status);
+
+            if (categoryId.HasValue)
+                query = query.Where(c=>c.CategoryId == categoryId.Value);
 
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(c => c.Name.Contains(search) || c.Teacher.FullName.Contains(search));
@@ -80,11 +84,12 @@ namespace LMS.Controllers
                 Pager = new Helpers.Pager(totalItems, page, pageSize),
             };
                 vm.CourseTable.Courses = await query
-                .OrderBy(c => c.CreatedAt)
+                .OrderByDescending(c => c.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(c => new CourseDetailVm(c.Language, c.Status)
                 {
+                    Id = c.CourseId,
                     Name = c.Name,
                     TeacherEmail = c.Teacher.Email,
                     TeacherName = c.Teacher.FullName,
@@ -108,7 +113,7 @@ namespace LMS.Controllers
             vm.SelectedCategoryId = categoryId;
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return PartialView("_CoursesTable", vm);
+                return PartialView("_CourseTable", vm.CourseTable);
 
             return View(vm);
         }

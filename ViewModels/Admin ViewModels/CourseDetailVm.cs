@@ -4,6 +4,7 @@ namespace LMS.ViewModels.Admin_ViewModels
 {
     public class CourseDetailVm
     {
+        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string TeacherEmail { get; set; } = string.Empty;
         public string TeacherName {  get; set; } = string.Empty;

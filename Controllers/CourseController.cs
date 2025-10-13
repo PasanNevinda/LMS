@@ -23,14 +23,16 @@ namespace LMS.Controllers
         private readonly ICourseService _courseService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IFileStorage _fileStorage;
+        private readonly IViewRenderService _viewRenderService;
 
-        public CourseController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ICourseService courseService, IFileStorage fileStorage)
+        public CourseController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ICourseService courseService, IFileStorage fileStorage, IViewRenderService viewRenderService)
         {
             _context = context;
             _courses = new Repository<Course>(context);
             _userManager = userManager;
             _courseService = courseService;
             _fileStorage = fileStorage;
+            _viewRenderService = viewRenderService;
         }
 
         [HttpGet]
@@ -76,7 +78,6 @@ namespace LMS.Controllers
                 Name = course.Name,
                 Price = course.Price,
                 Status = course.Status,
-                Curriculum = course.Curriculum,
                 TargetAudiance = course.TargetAudiance,
                 Language = course.Language
             };
@@ -109,7 +110,7 @@ namespace LMS.Controllers
                     return View(Vm);
                 }
 
-                return RedirectToAction("TeacherDashBoard", "Teacher");
+                return RedirectToAction("Courses", "Teacher");
 
             }
 
@@ -123,8 +124,7 @@ namespace LMS.Controllers
                     ModelState.AddModelError("Name", "Course name is required when submitting.");
                 if (string.IsNullOrWhiteSpace(Vm.Description))
                     ModelState.AddModelError("Description", "Course description is required when submitting.");
-                if (string.IsNullOrWhiteSpace(Vm.Curriculum))
-                    ModelState.AddModelError("Curriculum", "Course Curriculum is required when submitting.");
+               
                 if (string.IsNullOrWhiteSpace(Vm.TargetAudiance))
                     ModelState.AddModelError("TargetAudiance", "Course TargetAudiance is required when submitting.");
                 if (!Vm.CategoryId.HasValue)
@@ -166,7 +166,7 @@ namespace LMS.Controllers
                 }
             }
 
-            return RedirectToAction("TeacherDashBoard", "Teacher");
+            return RedirectToAction("Courses", "Teacher");
 
             //var sessionModel = HttpContext.Session.Get<MultistepViewModel>(SessionKey) ?? new MultistepViewModel();
             //sessionModel.Description = Vm.Description;
@@ -200,13 +200,13 @@ namespace LMS.Controllers
             {
                 return BadRequest("Unable to delete the course. Please try again.");
             }
-            return RedirectToAction("TeacherDashBoard", "Teacher");
+            return RedirectToAction("Courses", "Teacher");
         }
 
         // < A controller for view pending Course Details > //
 
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, string? returnUrl = null)
         {
             var course = await _courses.GetByIdAsync(id, new QueryOptions<Course> { Includes = "Modules, Modules.ContentItems" });
             if (course == null)
@@ -245,7 +245,9 @@ namespace LMS.Controllers
                        //},
                        FilePath = x.FilePath,
                     }).ToList()
-                }).ToList()
+                }).ToList(),
+                returnUrl = returnUrl
+                
             };
 
             return View(vm);
@@ -276,6 +278,47 @@ namespace LMS.Controllers
 
             return PartialView("_ModuleFormPartial", vm);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateorEditModule(ModuleVm vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(new {success = false, html = await _viewRenderService.RenderViewAsync(ControllerContext, "_ModuleFormPartial", vm, true) });
+            }
+
+            if (vm.Id == 0)
+            {
+                var module = await _courseService.CreateModuleAsync(vm);
+                var mvm = new ModuleVm
+                {
+                    Id = module.ModuleId,
+                    CourseId = module.CourseId,
+                    Name = module.Name,
+                    Description = module.Description,
+                    Items = new List<ModuleContentItemVm>(),
+                };
+                //return PartialView("_ModulePartial", mvm);
+                return Json(new { success = true, html = await _viewRenderService.RenderViewAsync(ControllerContext, "_ModulePartial", mvm, true), isNew = true });
+
+            }
+
+            var updatedModule = await _courseService.UpdateModuleAsync(vm);
+            var moduleVm = new ModuleVm
+            {
+                Id = updatedModule.ModuleId,
+                CourseId = updatedModule.CourseId,
+                Name = updatedModule.Name,
+                Description = updatedModule.Description,
+                Items = new List<ModuleContentItemVm>(),
+            };
+            //return PartialView("_ModulePartial", vm);
+            return Json(new { success = true, html = await _viewRenderService.RenderViewAsync(ControllerContext, "_ModulePartial", moduleVm, true), isNew = false });
+
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> AddItem(int CourseId, int ModuleId)
         {
@@ -364,23 +407,5 @@ namespace LMS.Controllers
 
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateorEditModule(ModuleVm vm)
-        {
-            if(!ModelState.IsValid)
-            {
-                return PartialView("_ModuleFormPartial", vm);
-            }
-
-            if(vm.Id == 0)
-            {
-                var module = await _courseService.CreateModuleAsync(vm);
-                return PartialView("_ModulePartial", vm);
-            }
-
-            var updatedModule = await _courseService.UpdateModuleAsync(vm);
-            return PartialView("_ModulePartial", vm);
-        }
     }
 }

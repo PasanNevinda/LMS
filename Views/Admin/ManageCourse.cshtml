@@ -47,6 +47,9 @@
             </div>
         </div>
 
-        @await Html.PartialAsync("_CourseTable", Model.CourseTable)
+        <div id="courseTableContainer">
+            @await Html.PartialAsync("_CourseTable", Model.CourseTable)
+        </div>
+
     </div>
 </div>

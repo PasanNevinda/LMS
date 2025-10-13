@@ -111,9 +111,9 @@ body {
 }
 
 .btn-secondary-custom {
-    background: white;
-    border: 1px solid var(--udemy-border);
-    color: var(--udemy-secondary);
+    background: linear-gradient(135deg, var(--udemy-primary), #8710d8);
+    border: none;
+    color: white;
     padding: 12px 24px;
     border-radius: 8px;
     font-weight: 600;

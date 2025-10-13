@@ -155,8 +155,6 @@ namespace LMS.Services
             if (!string.IsNullOrWhiteSpace(model.Description))
                 course.Description = model.Description;
 
-            if (!string.IsNullOrWhiteSpace(model.Curriculum))
-                course.Curriculum = model.Curriculum;
 
             if (!string.IsNullOrWhiteSpace(model.TargetAudiance))
                 course.TargetAudiance = model.TargetAudiance;

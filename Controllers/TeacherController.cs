@@ -18,7 +18,14 @@ namespace LMS.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> TeacherDashBoard()
+        public IActionResult TeacherDashBoard()
+        {   
+            ViewData["CurrentPage"] = "Dashboard";
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Courses()
         {
             var teacher = await _userManager.GetUserAsync(User);
             if (teacher == null)
@@ -39,7 +46,7 @@ namespace LMS.Controllers
                 ReviewdAt = c.ReviewedAt ?? DateTime.MinValue,
             }).ToList();
 
-            var vm = new TeacherDashboardViewModel
+            var vm = new TeacherCourseViewModel
             {
                 DraftCourses = vms.Where(c => c.Status == CourseStatus.Draft).ToList().OrderByDescending(x => x.UpdatedAt).ToList(),
                 PendingCourses = vms.Where(x => x.Status == CourseStatus.Pending).ToList(),
@@ -47,7 +54,7 @@ namespace LMS.Controllers
                 RejectedCourses = vms.Where(x => x.Status == CourseStatus.Rejected).ToList(),
                 PublishedCourses = vms.Where(x => x.Status == CourseStatus.Published).ToList()
             };
-
+            ViewData["CurrentPage"] = "Courses";
             return View(vm);
         }
     }

@@ -1,4 +1,7 @@
-﻿let editMode = false;
+﻿
+
+
+let editMode = false;
 let currentModuleId = null;
 
 // Toggle edit mode
@@ -67,29 +70,33 @@ function toggleContentFields() {
 
 
 function openAddModuleModal(courseId, moduleId = 0) {
-    const url = `/Course/CreateorEditModule?CourseId=${courseId}&ModuleId=${moduleId}`;
+    const params = { CourseId: courseId, ModuleId: moduleId };
+    const url = '/Course/CreateorEditModule';
 
-    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' }})   
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Server returned ${response.status}`);
+    AjaxService.get(url, params)
+        .then(result => {
+            if (result.success) {
+                const html = result.data; // This is the partial view HTML
+                document.getElementById('module-form-body').innerHTML = html;
+
+                const modalEl = document.getElementById('module-form-model');
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                const form = document.getElementById('addModuleForm');
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    submitAddModuleForm(this, modal);
+                });
+            } else {
+                console.error('Unexpected response:', result);
             }
-            return response.text();
         })
-        .then(html => {
-            document.getElementById('module-form-body').innerHTML = html;
+        .catch(err => {
+            console.error("Error loading module form:", err);
+            // Global handler will also trigger if set
+        });
 
-            const modalEl = document.getElementById('module-form-model');
-            const modal = new bootstrap.Modal(modalEl);
-            modal.show();
-
-            const form = document.getElementById('addModuleForm');
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                submitAddModuleForm(this, modal);
-            });
-        })
-        .catch(err => console.error("Error loading module form:", err));
 }
 
 
@@ -99,15 +106,16 @@ function submitAddModuleForm(form, modal) {
 
     const moduleId = parseInt(form.querySelector('[name="Id"]').value);
 
-    fetch(form.action, {
-        method: "POST",
-        body: formData,
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-    })
-        .then(response => response.text())
-        .then(html => {
-            if (html.includes("addModuleForm")) {
-                // ❌ Validation errors → reload form with messages
+    AjaxService.post(form.action, formData, { isFormData: true })
+        .then(result => {
+            const { success, html, isNew } = result.data; // This is the returned partial HTML or form with errors
+
+            //console.log(`success = ${success}`);
+            //console.log(`html = ${html}`);
+            //console.log(`isNew = ${isNew}`);
+
+            if (!success) {
+                // Validation errors → reload form with messages
                 document.getElementById("module-form-body").innerHTML = html;
 
                 // Rebind submit handler
@@ -117,13 +125,13 @@ function submitAddModuleForm(form, modal) {
                     submitAddModuleForm(newForm, modal);
                 });
             } else {
+                const moduleEl = document.getElementById(`module-${moduleId}`);
 
-                if (moduleId === 0) {
+                if (isNew) {
                     // Add new module
                     document.getElementById("modulesList").insertAdjacentHTML("beforeend", html);
                 } else {
                     // Replace updated module
-                    const moduleEl = document.getElementById(`module-${moduleId}`);
                     if (moduleEl) moduleEl.outerHTML = html;
                 }
 
@@ -138,8 +146,9 @@ function submitAddModuleForm(form, modal) {
         })
         .catch(err => {
             console.error("Error submitting module form:", err);
-            alert("Something went wrong while creating the module.");
+            // Global handler will also trigger if set
         });
+
 }
 
 function showAddItemModal(courseId,moduleId) {
@@ -269,6 +278,12 @@ function removeFile(indexToRemove) {
 // Initialize edit mode toggle
 document.getElementById('toggleEditMode').addEventListener('click', toggleEditMode);
 
+document.addEventListener('DOMContentLoaded', function () {
+    if (enableEditMode) {
+        // Ensure editMode flag is correct and call toggle function
+        if (!editMode) toggleEditMode();
+    }
+});
 
 
 //// Initialize the page

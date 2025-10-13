@@ -89,8 +89,16 @@
                 <!-- Curriculum -->
                 <div class="section-content" id="curriculum-content">
                     <h3>Curriculum</h3>
-                    <textarea asp-for="Curriculum" class="form-control" rows="8"></textarea>
-                    <span asp-validation-for="Curriculum" class="text-danger"></span>
+                    @* <textarea asp-for="Curriculum" class="form-control" rows="8"></textarea>
+                    <span asp-validation-for="Curriculum" class="text-danger"></span> *@
+                    <div>
+                        <br />
+                        <br />
+                        <a href="@Url.Action("Details", "Course", new { id = Model.CourseId, returnUrl = "Step2" })"
+                           class="btn btn-secondary-custom d-inline-flex align-items-center">
+                            <i class="bi bi-cloud-upload me-2"></i>Upload Content
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Language -->
@@ -142,7 +150,7 @@
                 <div class="action-buttons">
                     <div class="text-muted"><i class="bi bi-info-circle"></i> You can save as draft and continue later</div>
                     <div class="d-flex gap-2">
-                        <button type="submit" name="action" value="save" class="btn btn-secondary-custom">
+                        <button type="submit" name="action" value="save" class="btn btn-primary-custom">
                             <i class="bi bi-save me-2"></i>Save Draft
                         </button>
                         <button type="submit" name="action" value="submit" class="btn btn-primary-custom"

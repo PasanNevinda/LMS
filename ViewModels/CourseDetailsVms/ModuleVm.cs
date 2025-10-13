@@ -9,5 +9,6 @@ namespace LMS.ViewModels.CourseDetailsVms
         public string Name { get; set; }
         public string Description { get; set; }
         public List<ModuleContentItemVm> Items { get; set; } = new();
+
     }
 }

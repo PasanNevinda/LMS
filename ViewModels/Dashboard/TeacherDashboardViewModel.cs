@@ -2,7 +2,7 @@
 
 namespace LMS.ViewModels.Dashboard
 {
-    public class TeacherDashboardViewModel
+    public class TeacherCourseViewModel
     {
         public List<CourseVm> DraftCourses { get; set; } = new();
         public List<CourseVm> PendingCourses { get; set; } = new();

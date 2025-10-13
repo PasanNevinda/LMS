@@ -78,3 +78,58 @@ function showReviewCourseModal() {
         });
 }
 
+
+
+
+
+
+// Debounce utility
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Function to load courses via AJAX
+function loadCourses(page = 1) {
+    const status = $('#statusFilter').val() || null;
+    const categoryId = $('#categoryFilter').val() || null;
+    const search = $('#courseSearch').val() || "";
+    const pageSize = 5;  // Match server default
+
+    console.log('Loading courses with params:', { page, pageSize, status, categoryId, search });  // Added for debug
+
+    AjaxService.get('/Admin/ManageCourse', { page, pageSize, status, categoryId, search })
+        .then(result => {
+            console.log('AJAX result:', result);
+            console.log('AJAX result:', result.data);
+            if (result.success) {
+                $('#courseTableContainer').html(result.data);
+
+                // Re-initialize tooltips for new elements
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            } else {
+                showToast('Failed to load courses.', 'danger');
+            }
+        })
+        .catch(err => {
+            console.error('AJAX error:', err);
+            showToast('Error loading courses: ' + err.message, 'danger');
+        });
+}
+
+// Event listeners for filters (auto-update on change)
+$(document).ready(function () {
+    $('#statusFilter').change(() => loadCourses(1));
+    $('#categoryFilter').change(() => loadCourses(1));
+    $('#courseSearch').on('input', debounce(() => loadCourses(1), 300));
+});

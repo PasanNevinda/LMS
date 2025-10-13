@@ -21,7 +21,7 @@
                 @foreach(var course in Model.Courses)
                 {
                     
-                    <tr data-course-id="1">
+                    <tr data-course-id="@course.Id">
                         <td>
                             <div class="d-flex align-items-center">
                                 @if (!string.IsNullOrEmpty(course.ImgUrl))
@@ -77,9 +77,9 @@
     </div>
 </div>
 
-<!-- Pagination -->
+@* <!-- Pagination -->
 <div class="d-flex justify-content-between align-items-center mt-4">
-    <span class="text-muted"><i class="bi bi-list-ul me-1"></i>Showing 1 to 3 of 23 results</span>
+    <span class="text-muted"><i class="bi bi-list-ul me-1"></i>Showing 1 to 100 of @Model.Pager.TotalItems results</span>
     <nav aria-label="Course pagination">
         <ul class="pagination">
             <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i> Previous</a></li>
@@ -87,6 +87,43 @@
             <li class="page-item"><a class="page-link" href="#">2</a></li>
             <li class="page-item"><a class="page-link" href="#">3</a></li>
             <li class="page-item"><a class="page-link" href="#">Next <i class="bi bi-chevron-right"></i></a></li>
+        </ul>
+    </nav>
+</div> *@
+
+<!-- Pagination -->
+<div class="d-flex justify-content-between align-items-center mt-4">
+    @{
+        var startItem = (Model.Pager.CurrentPage - 1) * Model.Pager.PageSize + 1;
+        var endItem = Math.Min(startItem + Model.Pager.PageSize - 1, Model.Pager.TotalItems);
+    }
+    <span class="text-muted"><i class="bi bi-list-ul me-1"></i>Showing @startItem to @endItem of @Model.Pager.TotalItems results</span>
+    <nav aria-label="Course pagination">
+        <ul class="pagination">
+            @if(Model.Pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" onclick="loadCourses(@Model.Pager.CurrentPage - 1)")>
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                </li>
+            }
+         
+            @for (int p = Model.Pager.StartPage; p <= Model.Pager.EndPage; p++)
+            {
+                <li class="page-item @(p == Model.Pager.CurrentPage ? "active" : "")">
+                    <a class="page-link" onclick="loadCourses(@p); return false;">@p</a>
+                </li>
+            }
+
+            @if(Model.Pager.CurrentPage != Model.Pager.TotalPages)
+            {
+                <li class="page-item @(Model.Pager.CurrentPage >= Model.Pager.TotalPages ? "disabled" : "")">
+                    <a class="page-link" onclick="loadCourses(@Model.Pager.CurrentPage + 1)")>
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            }
         </ul>
     </nav>
 </div>
