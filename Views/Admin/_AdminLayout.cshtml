@@ -21,11 +21,15 @@
         @RenderBody()
     </main>
 
+    @* toast container *@
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;"></div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="~/js/AdminDashboard.js"></script>
+    <script src="~/js/AjaxService.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

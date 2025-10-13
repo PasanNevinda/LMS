@@ -30,9 +30,6 @@ namespace LMS.ViewModels.CourseEditVM
         [Range(0, double.MaxValue, ErrorMessage = "Price must be a positive number")]
         public decimal Price { get; set; }
 
-        [Display(Name = "Curriculum")]
-        public string? Curriculum { get; set; }
-
         public List<Category> Categories { get; set; } = new List<Category>();
 
         [Display(Name = "Display Image")]

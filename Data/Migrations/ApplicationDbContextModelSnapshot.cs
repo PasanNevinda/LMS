@@ -126,29 +126,6 @@ namespace LMS.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "",
-                            IsActive = true,
-                            Name = "Programming"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "",
-                            IsActive = true,
-                            Name = "Design"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "",
-                            IsActive = true,
-                            Name = "Mathematics"
-                        });
                 });
 
             modelBuilder.Entity("LMS.Models.Entities.ContentItem", b =>

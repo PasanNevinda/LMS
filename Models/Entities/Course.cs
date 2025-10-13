@@ -11,7 +11,7 @@ namespace LMS.Models.Entities
         Sinhala = 0,
 
         [Display(Name = "Tamil")]
-        Tamil1 = 1,
+        Tamil = 1,
 
         [Display(Name = "English")]
         English = 2,

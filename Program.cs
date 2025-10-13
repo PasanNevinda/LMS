@@ -27,6 +27,8 @@ namespace LMS
             builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ICourseService, CourseService>();
+            builder.Services.AddScoped<IViewRenderService, ViewRenderService>();
+
 
             // Add session services
             builder.Services.AddDistributedMemoryCache(); // Required for session
@@ -43,7 +45,11 @@ namespace LMS
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<ApplicationDbContext>();
                 await SeedService.SeedDbAsync(services);
+                List<string> TeacherEmails = new List<string> { "teacher1@test.com" };
+                await DbSeeder.SeedTeachersAsync(services, TeacherEmails);
+                DbSeeder.Seed(context);
             }
 
             // Configure the HTTP request pipeline.

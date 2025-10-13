@@ -40,11 +40,7 @@ namespace LMS.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Category>().HasData(
-            new Category { Id = 1, Name = "Programming" },
-            new Category { Id = 2, Name = "Design" },
-            new Category { Id = 3, Name = "Mathematics" }
-        );
+            
 
             //  builder.Entity<ContentUpload>(entity =>
             /*  {

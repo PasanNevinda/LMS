@@ -7,7 +7,7 @@
 
 
 <!-- Dashboard Page -->
-<div class="page-section active" id="dashboard">
+<div class="page-section" id="dashboard">
     <div class="dashboard-header">
         <div class="container-fluid">
             <h1>Welcome back, Admin!</h1>
@@ -98,71 +98,45 @@
                                     <th><i class="bi bi-tags me-1"></i>Category</th>
                                     <th><i class="bi bi-circle-fill me-1"></i>Status</th>
                                     <th><i class="bi bi-calendar me-1"></i>Submitted</th>
-                                    <th><i class="bi bi-gear me-1"></i>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Complete React Development Course</td>
-                                    <td>John Smith</td>
-                                    <td>Programming</td>
-                                    <td><span class="status-badge status-pending">Pending</span></td>
-                                    <td>2 hours ago</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-primary-custom" data-bs-toggle="tooltip" title="Review Details" onclick="reviewCourse(1)">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-success-custom" data-bs-toggle="tooltip" title="Approve" onclick="approveCourse(1)">
-                                                <i class="bi bi-check-lg"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger-custom" data-bs-toggle="tooltip" title="Reject" onclick="rejectCourse(1)">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Digital Marketing Masterclass</td>
-                                    <td>Sarah Johnson</td>
-                                    <td>Marketing</td>
-                                    <td><span class="status-badge status-pending">Pending</span></td>
-                                    <td>4 hours ago</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-primary-custom" data-bs-toggle="tooltip" title="Review Details" onclick="reviewCourse(2)">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-success-custom" data-bs-toggle="tooltip" title="Approve" onclick="approveCourse(2)">
-                                                <i class="bi bi-check-lg"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-danger-custom" data-bs-toggle="tooltip" title="Reject" onclick="rejectCourse(2)">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Python for Data Science</td>
-                                    <td>Mike Chen</td>
-                                    <td>Data Science</td>
-                                    <td><span class="status-badge status-accepted">Accepted</span></td>
-                                    <td>Sep 11, 2025</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-primary-custom" data-bs-toggle="tooltip" title="View Details" onclick="reviewCourse(3)">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" title="More Actions">
-                                                <i class="bi bi-three-dots"></i>
-                                            </button>
-                                            <div class="dropdown-menu" style="display: none;">
-                                                <a class="dropdown-item" href="#"><i class="bi bi-pencil me-2"></i>Edit</a>
-                                                <a class="dropdown-item" href="#"><i class="bi bi-archive me-2"></i>Archive</a>
+                                @foreach(var course in Model.RecentCourses)
+                                {
+                                    
+                                    <tr>
+                                        <td>@course.Name</td>
+                                        <td>@course.Instructor</td>
+                                        <td>@course.Category</td>
+                                        <td><span class="status-badge status-pending">@course.Status</span></td>
+                                        
+                                            @{
+                                                var timeDifference = DateTime.UtcNow - course.Submitted;
+
+                                                if (timeDifference.TotalHours > 24)
+                                                {
+                                                <td>Submitted on @course.Submitted.ToString("MMM dd, yyyy")</td>
+                                                }
+                                                else
+                                                {
+                                                <td>Submitted @Math.Floor(timeDifference.TotalHours) hours ago</td>
+                                                }
+                                            }
+                                        @* <td>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-primary-custom" data-bs-toggle="tooltip" title="Review Details" onclick="showReviewCourseModal()">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success-custom" data-bs-toggle="tooltip" title="Approve" onclick="approveCourse(1)">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger-custom" data-bs-toggle="tooltip" title="Reject" onclick="rejectCourse(1)">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </button>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td> *@
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -190,6 +164,21 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<!-- Course Review Modal -->
+<div class="modal fade" id="courseReviewModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-body" id="review-body">
+            <!-- server HTML inserted here -->
         </div>
     </div>
 </div>

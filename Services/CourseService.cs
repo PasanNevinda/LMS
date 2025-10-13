@@ -86,8 +86,18 @@ namespace LMS.Services
                 .FirstOrDefaultAsync(m => m.ModuleId == moduleId);
         }
 
-        public async Task<List<Course>> GetPendingCoursesAsync()
+        public async Task<List<Course>> GetPendingCoursesAsync(int count=0)
         {
+            if(count > 0)
+            {        return await _context.Courses
+                    .Include(c => c.Teacher)
+                    .Include(c => c.Category)
+                    .Where(c => c.Status == CourseStatus.Pending)
+                    .OrderBy(c => c.UpdatedAt)
+                    .Take(count)
+                    .ToListAsync();
+            }
+
             return await _context.Courses
                 .Include(c => c.Teacher)
                 .Include(c => c.Category)
@@ -95,7 +105,7 @@ namespace LMS.Services
                 .OrderBy(c => c.UpdatedAt)
                 .ToListAsync();
         }
-        
+
         public async Task<List<Course>> GetTeacherCoursesAsync(string teacherId)
         {
             return await _context.Courses
@@ -128,7 +138,7 @@ namespace LMS.Services
             course.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            await _emailService.SendCourseSubmittedNotificationAsync(course);
+            //await _emailService.SendCourseSubmittedNotificationAsync(course);
             return true;
         }
 
@@ -145,8 +155,6 @@ namespace LMS.Services
             if (!string.IsNullOrWhiteSpace(model.Description))
                 course.Description = model.Description;
 
-            if (!string.IsNullOrWhiteSpace(model.Curriculum))
-                course.Curriculum = model.Curriculum;
 
             if (!string.IsNullOrWhiteSpace(model.TargetAudiance))
                 course.TargetAudiance = model.TargetAudiance;

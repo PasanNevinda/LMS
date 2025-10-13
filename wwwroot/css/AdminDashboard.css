@@ -235,12 +235,9 @@ body {
 }
 
 .page-section {
-    display: none;
+    display: block;
 }
 
-    .page-section.active {
-        display: block;
-    }
 
 .course-details-section {
     margin-top: 1rem;

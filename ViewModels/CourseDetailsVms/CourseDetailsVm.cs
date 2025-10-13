@@ -13,5 +13,7 @@ namespace LMS.ViewModels.CourseDetailsVms
         public decimal Rating { get; set; } = 4;
 
         public List<ModuleVm> Modules { get; set; } = new();
+
+        public string? returnUrl = null;
     }
 }
