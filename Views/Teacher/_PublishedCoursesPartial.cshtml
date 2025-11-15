@@ -8,7 +8,15 @@
             {
                 <div class="course-card" data-course-id="@course.CourseId">
                     <div class="course-image">
+                        @if (!string.IsNullOrEmpty(course.ImagePath))
+                        {
+                            <img src="~/@course.ImagePath" alt="CourseImage">
+
+                        }
+                        else
+                        {
                         <i class="bi bi-trophy"></i>
+                        }
                         <span class="status-badge badge-published">Live</span>
                     </div>
                     <div class="course-content">

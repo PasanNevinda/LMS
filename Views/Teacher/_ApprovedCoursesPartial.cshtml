@@ -11,7 +11,15 @@
                 <!-- Sample Approved Course Card -->
                 <div class="course-card" data-course-id="@course.CourseId">
                     <div class="course-image" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                        <i class="bi bi-check-circle-fill"></i>
+                        @if (!string.IsNullOrEmpty(course.ImagePath))
+                        {
+                            <img src="~/@course.ImagePath" alt="CourseImage">
+
+                        }
+                        else
+                        {
+                            <i class="bi bi-check-circle-fill"></i>
+                        }
                         <span class="status-badge badge-approved">Approved</span>
                     </div>
                     <div class="course-content">

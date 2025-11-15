@@ -49,22 +49,33 @@
                         <td>@course.TeacherName <br><small class="text-muted"><i class="bi bi-envelope me-1"></i>@course.TeacherEmail</small></td>
                         <td><span class="badge bg-primary"><i class="bi bi-code-slash me-1"></i>@course.Category</span></td>
                         <td><strong>$@course.Price</strong></td>
-                        <td><span class="status-badge status-pending">@course.Status</span></td>
+                        <td><span class="status-badge status-@course.Status.ToLower()">@course.Status</span></td>
                         <td>@course.Submitted <br><small class="text-muted">###</small></td>
                         <td>
                             <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-primary-custom" data-bs-toggle="tooltip" title="View Details" onclick="reviewCourse(1)">
+                                <button class="btn btn-sm btn-primary-custom" data-bs-toggle="tooltip" title="View Details" onclick="reviewCourse(@course.Id)">
                                     <i class="bi bi-eye"></i>
                                 </button>
-                                <button class="btn btn-sm btn-success-custom" data-bs-toggle="tooltip" title="Approve" onclick="approveCourse(1)">
-                                    <i class="bi bi-check-lg"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger-custom" data-bs-toggle="tooltip" title="Reject with Notes" onclick="rejectCourse(1)">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Request Changes" onclick="requestChanges(1)">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
+                                @if (course.Status == "Pending")
+                                {
+                                    <button class="btn btn-sm btn-success-custom" data-bs-toggle="tooltip" title="Approve" onclick="approveCourse(@course.Id)">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger-custom" data-bs-toggle="tooltip" title="Reject with Notes" onclick="openRejectModal(@course.Id)">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                }
+                                else if(course.Status != "Published")
+                                {
+                                    <button type="button" class="btn btn-rollback"
+                                            data-bs-toggle="tooltip"
+                                            title="Rollback to Pending"
+                                            onclick="rollbackToPending(@course.Id)">
+                                        <i class="bi bi-arrow-counterclockwise me-2"></i>
+                                    </button>
+
+
+                                }
                             </div>
                         </td>
                     </tr>

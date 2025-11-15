@@ -1,4 +1,6 @@
-﻿/** 
+﻿
+
+/** 
 * AjaxService - A robust AJAX utility for ASP.NET Core MVC
 * Supports GET, POST, file upload, retry logic, and anti-forgery handling.
 */
@@ -159,6 +161,13 @@ class AjaxService {
         for (let attempt = 1; attempt <= retryConfig.maxRetries; attempt++) {
             try {
                 const result = await Promise.resolve(requestFn());
+
+                // ADD THIS: If server returned error (4xx/5xx), don't retry
+                if (!result.success && result.status >= 400 && result.status < 600) {
+                    this._log(`Server error ${result.status}, not retrying: ${url}`);
+                    return result; // ← Return error immediately
+                }
+
                 if (attempt > 1) this._log(`${method} succeeded on attempt ${attempt}: ${url}`);
                 return result;
             } catch (error) {
@@ -212,40 +221,93 @@ class AjaxService {
 
     static async _handleResponse(response, method, url) {
         const contentType = response.headers.get('Content-Type') || '';
+        let data = null;
+        let errorMessage = null;
 
-        if (response.status === 204) {
-            return { success: true, data: null, status: 204, statusText: 'No Content' };
+        try {
+            if (contentType.includes('application/json')) {
+                data = await response.json();
+            } else if (contentType.includes('text/')) {
+                data = await response.text();
+            } else {
+                data = await response.blob();
+            }
+        } catch (e) {
+            // Parsing failed
         }
 
         if (!response.ok) {
-            let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-            try {
-                if (contentType.includes('application/json')) {
-                    const err = await response.json();
-                    errorMessage = err.message || err.title || errorMessage;
-                } else if (contentType.includes('text/')) {
-                    const text = await response.text();
-                    errorMessage = text || errorMessage;
-                }
-            } catch { /* ignore */ }
-
-            throw new Error(errorMessage);
+            // Instead of throw → return structured error
+            errorMessage = data?.message || data || `HTTP ${response.status}`;
+            return {
+                success: false,
+                error: {
+                    message: errorMessage,
+                    status: response.status,
+                    statusText: response.statusText,
+                    data
+                },
+                status: response.status
+            };
         }
-
-        let data;
-        if (contentType.includes('application/json')) data = await response.json();
-        else if (contentType.includes('text/')) data = await response.text();
-        else data = await response.blob();
 
         return {
             success: true,
             data,
             status: response.status,
             statusText: response.statusText,
-            headers: Object.fromEntries(response.headers.entries()),
             contentType
         };
     }
+
+    //static async _handleResponse(response, method, url) {
+    //    const contentType = response.headers.get('Content-Type') || '';
+
+    //    if (response.status === 204) {
+    //        return { success: true, data: null, status: 204, statusText: 'No Content' };
+    //    }
+
+    //    if (!response.ok) {
+    //        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+    //        try {
+    //            if (contentType.includes('application/json')) {
+    //                const err = await response.json();
+    //                errorMessage = err.message || err.title || errorMessage;
+    //            } else if (contentType.includes('text/')) {
+    //                const text = await response.text();
+    //                errorMessage = text || errorMessage;
+    //            }
+
+    //            return {
+    //                success: false,
+    //                error: {
+    //                    message: error,
+    //                    status: response.status,
+    //                    statusText: response.statusText,
+    //                    data
+    //                },
+    //                status: response.status
+    //            };
+    //        } catch { /* ignore */ }
+
+
+            
+    //    }
+
+    //    let data;
+    //    if (contentType.includes('application/json')) data = await response.json();
+    //    else if (contentType.includes('text/')) data = await response.text();
+    //    else data = await response.blob();
+
+    //    return {
+    //        success: true,
+    //        data,
+    //        status: response.status,
+    //        statusText: response.statusText,
+    //        headers: Object.fromEntries(response.headers.entries()),
+    //        contentType
+    //    };
+    //}
 
     static _handleError(error, method, url) {
         const errType = error.name === 'AbortError'
@@ -333,3 +395,6 @@ class AjaxService {
         return null;
     }
 }
+
+
+window.AjaxService = AjaxService;

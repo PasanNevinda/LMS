@@ -1,0 +1,10 @@
+﻿@model int
+<form asp-action="RejectCourse" asp-controller="Course" method="post" id="rejectCourseForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="courseId" value="@Model" />
+    <div class="mb-3">
+        <label class="form-label"><i class="bi bi-chat-square-text me-1"></i>Review Notes <span class="text-danger">*</span></label>
+        <textarea name="notes" class="form-control" rows="4" placeholder="Please provide detailed feedback to help the instructor improve their course. Be specific about changes needed..." required></textarea>
+        <div class="form-text"><i class="bi bi-info-circle me-1"></i>These notes will be emailed to the instructor for revisions.</div>
+    </div>
+</form>
