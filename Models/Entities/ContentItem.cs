@@ -12,6 +12,7 @@ namespace LMS.Models.Entities
 
         public string FilePath { get; set; }     // local path
         public string StageName { get; set; }
+        public string Type {  get; set; }
         public int OrderNo { get; set; } = 0;
 
 

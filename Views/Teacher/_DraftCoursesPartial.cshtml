@@ -9,7 +9,15 @@
                 <!-- Sample Draft Course Card -->
                 <div class="course-card" data-course-id="@course.CourseId">
                     <div class="course-image">
-                        <i class="bi bi-pencil-square"></i>
+                        @if (!string.IsNullOrEmpty(course.ImagePath))
+                        {
+                            <img src="~/@course.ImagePath" alt="CourseImage">
+
+                        }
+                        else
+                        {
+                            <i class="bi bi-pencil-square"></i>
+                        }
                         <span class="status-badge badge-draft">Draft</span>
                     </div>
                     <div class="course-content">

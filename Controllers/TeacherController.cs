@@ -1,11 +1,13 @@
 ﻿using LMS.Models.Entities;
 using LMS.Services;
 using LMS.ViewModels.Dashboard;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LMS.Controllers
 {
+    [Authorize(Roles ="Teacher")]
     public class TeacherController : Controller
     {
         private readonly ICourseService _courseService;

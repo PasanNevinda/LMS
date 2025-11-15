@@ -4,12 +4,14 @@ using LMS.Services;
 using LMS.ViewModels;
 using LMS.ViewModels.CourseDetailsVms;
 using LMS.ViewModels.CourseEditVM;
+using LMS.ViewModels.Dashboard;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
+using System.IO;
 using System.Security.Claims;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -389,7 +391,7 @@ namespace LMS.Controllers
                         Description = Path.GetFileName(file.FileName),
                         //TeacherId = TID,
                         StageName = customName,
-                        
+                        Type = relativePath.Split('/')[1]
                     };
                     _context.ContentItems.Add(record);
                     uploadedCount++;
@@ -406,6 +408,9 @@ namespace LMS.Controllers
             return Json(new { success = true, message = "Upload complete!" });
 
         }
+
+
+        
 
     }
 }

@@ -10,7 +10,15 @@
                 <!-- Sample Pending Course Card -->
                 <div class="course-card" data-course-id="@course.CourseId">
                     <div class="course-image" style="background: linear-gradient(135deg, #f69c08 0%, #e0a800 100%);">
-                        <i class="bi bi-clock-history"></i>
+                        @if (!string.IsNullOrEmpty(course.ImagePath))
+                        {
+                            <img src="~/@course.ImagePath" alt="CourseImage">
+
+                        }
+                        else
+                        {
+                            <i class="bi bi-clock-history"></i>
+                        }
                         <span class="status-badge badge-pending">Under Review</span>
                     </div>
                     <div class="course-content">
