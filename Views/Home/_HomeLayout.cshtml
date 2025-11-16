@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduPlatform - Learn Without Limits</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Home.css" />
+
+</head>
+
+<body>
+
+    <partial name="_LoginPartial" />
+
+        @RenderBody()
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h5 class="footer-title">EduPlatform</h5>
+                    <p>Empowering learners worldwide with quality education.</p>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="footer-title">Quick Links</h5>
+                    <a href="/About" class="footer-link">About Us</a>
+                    <a href="/Careers" class="footer-link">Careers</a>
+                    <a href="/Blog" class="footer-link">Blog</a>
+                    <a href="/Contact" class="footer-link">Contact</a>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="footer-title">Resources</h5>
+                    <a href="/Help" class="footer-link">Help Center</a>
+                    <a href="/Terms" class="footer-link">Terms of Service</a>
+                    <a href="/Privacy" class="footer-link">Privacy Policy</a>
+                    <a href="/Sitemap" class="footer-link">Sitemap</a>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="footer-title">Teaching</h5>
+                    <a href="/TeachOnPlatform" class="footer-link">Become an Instructor</a>
+                    <a href="/TeachingCenter" class="footer-link">Teaching Center</a>
+                    <a href="/InstructorSupport" class="footer-link">Instructor Support</a>
+                </div>
+            </div>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 40px 0 20px;">
+            <div class="text-center">
+                <p>&copy; 2025 EduPlatform, Inc. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/AjaxService.js"></script>
+    <script src="~/js/Shared.js"></script>
+
+</body>
+</html>
