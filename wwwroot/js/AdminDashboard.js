@@ -178,7 +178,7 @@ function reviewCourse(courseId) {
 
 
 function handleClick(ItemName, ItemType, Url) {
-    if (ItemType === "Videos") {
+    if (ItemType === "Video") {
         // Set video title
         document.getElementById('videoTitle').textContent = "🎬 " + ItemName;
         // Set iframe src
@@ -194,7 +194,7 @@ function handleClick(ItemName, ItemType, Url) {
             document.getElementById('videoFrame').src = "";
         }, { once: true });
 
-    } else if (ItemType === "Documents") {
+    } else if (ItemType === "Document") {
         // Set iframe src
         document.getElementById('pdfFrame').src = Url;
         // Set download link

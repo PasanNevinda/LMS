@@ -1,0 +1,229 @@
+﻿@using LMS.Models.Entities
+@using LMS.ViewModels.Student_ViewModles
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@model CourseDetail
+
+@{
+    Layout = SignInManager.IsSignedIn(User) && User.IsInRole("Student") ? "_StudentLayout" : "~/Views/Home/_HomeLayout.cshtml";
+}
+
+<div id="courseDetail-nodejs" class="course-detail-view" style="display: block;">
+    <div class="course-hero">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <p class="course-subtitle">@Model.Name</p>
+
+                    <p class="course-category text-info fw-semibold mb-3">
+                        Category: <span class="text-light">@Model.Category</span>
+                    </p>
+
+                    <!-- PROMO VIDEO SECTION -->
+                    <div class="promo-video-wrapper">
+                        <iframe width="100%" height="450"
+                                src="~/@Model.PromotionVideo"
+                                title="video player" frameborder="0"
+                                loading="lazy">
+                        </iframe>
+                    </div>
+
+                    <div class="course-meta">
+                        <div class="rating-badge">
+                            @if(Model.NoOfRatings > 0)
+                            {
+                                <span>@Model.Rating</span>
+                                <span class="stars">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= Math.Round(Model.Rating))
+                                        {
+                                            <text>★</text>
+                                        }
+                                        else
+                                        {
+                                            <text>☆</text>
+                                        }
+                                    }
+                                </span>
+                                <span>(@Model.NoOfRatings ratings)</span>
+                                
+                            }
+                            else
+                            {
+                                <span>(No ratings yet)</span>
+
+                            }
+                            
+
+                        </div>
+                        <div><i class="bi bi-people me-1"></i>@Model.NoOfStudents students</div>
+                    </div>
+
+                    <div class="course-meta mt-3 d-flex flex-column align-items-start gap-4">
+                        <div>
+                            <span>Created by <strong>@Model.TeacherName</strong></span>
+                        </div>
+                        <div>
+                            <small style="color: rgba(255,255,255,0.8);">
+                                <i class="bi bi-calendar-check me-1"></i>Updated @Model.LastUpdate.ToString("MMMM yyyy")
+                            </small>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="main-content-detail">
+
+                    <h2 class="section-title mb-4">Course Content</h2>
+
+                    <div class="course-description mt-4 mb-5">
+                        <h2 class="section-title">Description</h2>
+                        <p class="text-muted fs-6 lh-base">
+                            @Model.Description
+                        </p>
+                    </div>
+
+                    <div class="accordion" id="courseContentAccordion">
+
+                        @{
+                            var j = 1;
+                        }
+
+                        @foreach(var module in Model.ModuleVmList)
+                        {
+                            var collapseId = $"module_{j}"; 
+                            var displayNumber = j;           
+                            j++;
+
+                            <div class="accordion-item border-0 mb-4 rounded-4 overflow-hidden shadow-sm bg-white">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed fw-semibold fs-5 text-dark bg-white rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseId">
+                                        <span class="me-3 text-primary fw-bold">Module @displayNumber</span>
+                                        <strong>@module.Name</strong>
+                                    </button>
+                                </h2>
+                                <div id="@collapseId" class="accordion-collapse collapse" data-bs-parent="#courseContentAccordion">
+                                    <div class="accordion-body pt-3 pb-4 px-4">
+                                        <p class="text-muted mb-4 small">
+                                            <strong>Description:</strong> @module.Description
+                                        </p>
+
+
+                                        <div class="content-list">
+
+                                            @foreach(var item in module.Items)
+                                            {
+                                                if(item.ItemType == "Document")
+                                                {
+                                                    <div class="d-flex align-items-start p-3 rounded-3 bg-light border-start border-3 border-danger">
+                                                        <i class="bi bi-file-earmark-pdf-fill text-danger fs-5 me-3 mt-1"></i>
+                                                        <div class="flex-grow-1">
+                                                            <strong>PDF: @item.ItemName</strong>
+                                                            <small class="text-secondary d-block mt-1">@item.Description</small>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                }
+
+                                                else if(item.ItemType == "Video")
+                                                {
+                                                    <div class="d-flex align-items-start mb-3 p-3 rounded-3 bg-light border-start border-3 border-primary">
+                                                        <i class="bi bi-play-circle-fill text-primary fs-5 me-3 mt-1"></i>
+                                                        <div class="flex-grow-1">
+                                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                                <strong>Video: @item.ItemName</strong>
+                                                                <small class="text-muted">8 min</small>
+                                                            </div>
+                                                            <small class="text-secondary">@item.Description</small>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                }
+                                            }
+
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+
+                    </div>
+
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 p-4 bg-light rounded-4 border">
+                        <div class="d-flex align-items-center gap-4 flex-wrap">
+                            <div class="text-center">
+                                <div class="fw-bold text-dark">@Model.ModuleVmList.Count() Modules</div>
+                                <small class="text-muted"><i class="bi bi-list-ul me-1"></i>Sections</small>
+                            </div>
+                            <div class="text-center">
+                                @{
+                                    var hours = Model.VideoLength.Hours;
+                                    var minutes = Model.VideoLength.Minutes;
+                                }
+                                <div class="fw-bold text-dark">
+                                    @(hours > 0 ? $"{hours}h " : "")
+                                    @(minutes > 0 ? $"{minutes}m " : "")
+                                </div>
+                                <small class="text-muted"><i class="bi bi-clock me-1"></i>Total length</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="sidebar-card">
+                    <img src="~/@Model.CourseImage" class="course-preview-image" alt="Course">
+                    <div class="sidebar-content">
+                        <div class="price-section">
+                            <span class="current-price">$@Model.Price</span>
+
+                        </div>
+
+                        <div class="d-grid gap-2 mb-3">
+                            <button class="btn-primary-custom" onclick="addToCart('nodejs')">
+                                <i class="bi bi-cart-plus me-2"></i>Add to cart
+                            </button>
+                        </div>
+
+
+
+                        <h6 class="fw-bold mb-3">This course includes:</h6>
+                        <ul class="course-includes">
+                            <li>
+                                <i class="bi bi-play-circle"></i>
+
+                                <span>
+                                    @(hours > 0 ? $"{hours}h " : "")
+                                    @(minutes > 0 ? $"{minutes}m " : "")
+                                    on-demand video
+                                </span>
+
+                            </li>
+                            <li>
+                                <i class="bi bi-infinity"></i>
+                                <span>Full lifetime access</span>
+                            </li>
+                            <li>
+                                <i class="bi bi-phone"></i>
+                                <span>Access on mobile and TV</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

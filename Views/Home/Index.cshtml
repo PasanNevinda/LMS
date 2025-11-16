@@ -1,8 +1,222 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    Layout = "_HomeLayout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-bg-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content text-center animate-fade-in">
+                <h1 class="hero-title">Learn Without Limits</h1>
+                <p class="hero-subtitle">Discover courses from expert instructors and start learning today</p>
+            <div class="hero-search position-relative">
+                <form asp-controller="Student" asp-action="BrowseCourse" method="get">
+                    <input type="text" name="Search" class="form-control" placeholder="What do you want to learn?">
+                    <button type="submit"><i class="bi bi-search"></i></button>
+                </form>
+            </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">Why Choose EduPlatform?</h2>
+                <p class="section-subtitle">Empowering learners and educators worldwide</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-collection-play"></i>
+                        </div>
+                        <h3 class="feature-title">15,000+ Courses</h3>
+                        <p>Access a vast library of courses across multiple disciplines and skill levels</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h3 class="feature-title">Expert Instructors</h3>
+                        <p>Learn from industry professionals and subject matter experts</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <h3 class="feature-title">Certificates</h3>
+                        <p>Earn certificates upon completion to showcase your achievements</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-phone"></i>
+                        </div>
+                        <h3 class="feature-title">Learn Anywhere</h3>
+                        <p>Study at your own pace on any device, anytime, anywhere</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-infinity"></i>
+                        </div>
+                        <h3 class="feature-title">Lifetime Access</h3>
+                        <p>Get unlimited access to courses you've purchased forever</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-chat-dots"></i>
+                        </div>
+                        <h3 class="feature-title">Community Support</h3>
+                        <p>Connect with fellow learners and get help when you need it</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Courses -->
+    <section class="courses-section" id="courses">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Popular Courses</h2>
+                <p class="section-subtitle">Top-rated courses chosen by our students</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="course-card">
+                        <img src="https://via.placeholder.com/300x200/667eea/ffffff?text=Web+Development" class="course-image" alt="Course">
+                        <div class="course-content">
+                            <h4 class="course-title">Complete Web Development Bootcamp</h4>
+                            <p class="course-instructor">By Dr. Angela Yu</p>
+                            <div class="course-rating">
+                                <span class="rating-value">4.8</span>
+                                <span class="stars">★★★★★</span>
+                                <span class="text-muted">(12,547)</span>
+                            </div>
+                            <div>
+                                <span class="course-price">$79.99</span>
+                                <span class="course-old-price">$199.99</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="course-card">
+                        <img src="https://via.placeholder.com/300x200/764ba2/ffffff?text=Python" class="course-image" alt="Course">
+                        <div class="course-content">
+                            <h4 class="course-title">Python for Data Science and Machine Learning</h4>
+                            <p class="course-instructor">By Jose Portilla</p>
+                            <div class="course-rating">
+                                <span class="rating-value">4.9</span>
+                                <span class="stars">★★★★★</span>
+                                <span class="text-muted">(18,234)</span>
+                            </div>
+                            <div>
+                                <span class="course-price">$89.99</span>
+                                <span class="course-old-price">$189.99</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="course-card">
+                        <img src="https://via.placeholder.com/300x200/f093fb/ffffff?text=Design" class="course-image" alt="Course">
+                        <div class="course-content">
+                            <h4 class="course-title">UI/UX Design Complete Course</h4>
+                            <p class="course-instructor">By Daniel Scott</p>
+                            <div class="course-rating">
+                                <span class="rating-value">4.7</span>
+                                <span class="stars">★★★★★</span>
+                                <span class="text-muted">(8,932)</span>
+                            </div>
+                            <div>
+                                <span class="course-price">$69.99</span>
+                                <span class="course-old-price">$159.99</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="course-card">
+                        <img src="https://via.placeholder.com/300x200/4facfe/ffffff?text=Marketing" class="course-image" alt="Course">
+                        <div class="course-content">
+                            <h4 class="course-title">Digital Marketing Masterclass</h4>
+                            <p class="course-instructor">By Phil Ebiner</p>
+                            <div class="course-rating">
+                                <span class="rating-value">4.6</span>
+                                <span class="stars">★★★★☆</span>
+                                <span class="text-muted">(6,421)</span>
+                            </div>
+                            <div>
+                                <span class="course-price">$74.99</span>
+                                <span class="course-old-price">$169.99</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-5">
+            <a asp-controller="Student" asp-action="BrowseCourse" class="btn btn-primary-custom btn-lg">Explore All Courses</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <span class="stat-number">50M+</span>
+                        <span class="stat-label">Students Enrolled</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <span class="stat-number">15,000+</span>
+                        <span class="stat-label">Courses Available</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <span class="stat-number">75,000+</span>
+                        <span class="stat-label">Expert Instructors</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <span class="stat-number">190+</span>
+                        <span class="stat-label">Countries Reached</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-card">
+                <h2 class="cta-title">Become an Instructor Today</h2>
+                <p class="cta-description">Share your knowledge with millions of students worldwide and earn money teaching what you love</p>
+                <a asp-area="Identity" asp-page="/Account/Register" asp-route-Type="Teacher" class="btn btn-white">Start Teaching</a>
+            </div>
+        </div>
+    </section>

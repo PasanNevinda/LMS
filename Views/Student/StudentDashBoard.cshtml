@@ -1,0 +1,163 @@
+﻿@{
+    Layout = "_StudentLayout";
+}
+
+<!-- Dashboard View -->
+<div id="dashboardView">
+    <div class="page-header">
+        <div class="container-fluid px-4">
+            <h1 class="page-title">My Learning Dashboard</h1>
+            <p class="text-muted">Track your progress and continue learning</p>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4 mb-4">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-collection-play"></i>
+                    </div>
+                    <span class="stat-value">4</span>
+                    <span class="stat-label">Enrolled Courses</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-heart"></i>
+                    </div>
+                    <span class="stat-value" id="wishlistCount">0</span>
+                    <span class="stat-label">Wishlist Items</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-cart3"></i>
+                    </div>
+                    <span class="stat-value" id="cartCount">0</span>
+                    <span class="stat-label">Cart Items</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <span class="stat-value">127h</span>
+                    <span class="stat-label">Learning Time</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4">
+        <h3 class="mb-4">My Enrolled Courses</h3>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="course-card">
+                    <img src="https://via.placeholder.com/300x160/667eea/ffffff?text=React" class="course-image" alt="Course">
+                    <div class="course-content">
+                        <h5 class="course-title">Complete React Development Course</h5>
+                        <p class="course-instructor">By John Smith</p>
+                        <div class="progress-section">
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Progress</small>
+                                <small class="text-muted fw-bold">68%</small>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 68%"></div>
+                            </div>
+                        </div>
+                        <div class="course-stats">
+                            <span><i class="bi bi-play-circle me-1"></i>32 of 47 lessons</span>
+                            <span><i class="bi bi-clock me-1"></i>2h 15m left</span>
+                        </div>
+                        <button class="btn btn-primary-custom">
+                            <i class="bi bi-play-circle me-2"></i>Continue Learning
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="course-card">
+                    <img src="https://via.placeholder.com/300x160/764ba2/ffffff?text=Python" class="course-image" alt="Course">
+                    <div class="course-content">
+                        <h5 class="course-title">Python for Data Science</h5>
+                        <p class="course-instructor">By Sarah Johnson</p>
+                        <div class="progress-section">
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Progress</small>
+                                <small class="text-muted fw-bold">45%</small>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        <div class="course-stats">
+                            <span><i class="bi bi-play-circle me-1"></i>18 of 40 lessons</span>
+                            <span><i class="bi bi-clock me-1"></i>4h 30m left</span>
+                        </div>
+                        <button class="btn btn-primary-custom">
+                            <i class="bi bi-play-circle me-2"></i>Continue Learning
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="course-card">
+                    <img src="https://via.placeholder.com/300x160/f093fb/ffffff?text=Design" class="course-image" alt="Course">
+                    <div class="course-content">
+                        <h5 class="course-title">UI/UX Design Masterclass</h5>
+                        <p class="course-instructor">By Mike Chen</p>
+                        <div class="progress-section">
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Progress</small>
+                                <small class="text-muted fw-bold">82%</small>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 82%"></div>
+                            </div>
+                        </div>
+                        <div class="course-stats">
+                            <span><i class="bi bi-play-circle me-1"></i>41 of 50 lessons</span>
+                            <span><i class="bi bi-clock me-1"></i>1h 20m left</span>
+                        </div>
+                        <button class="btn btn-primary-custom">
+                            <i class="bi bi-play-circle me-2"></i>Continue Learning
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="course-card">
+                    <img src="https://via.placeholder.com/300x160/4facfe/ffffff?text=Marketing" class="course-image" alt="Course">
+                    <div class="course-content">
+                        <h5 class="course-title">Digital Marketing Complete Guide</h5>
+                        <p class="course-instructor">By Emma Wilson</p>
+                        <div class="progress-section">
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Progress</small>
+                                <small class="text-muted fw-bold">23%</small>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 23%"></div>
+                            </div>
+                        </div>
+                        <div class="course-stats">
+                            <span><i class="bi bi-play-circle me-1"></i>12 of 52 lessons</span>
+                            <span><i class="bi bi-clock me-1"></i>6h 45m left</span>
+                        </div>
+                        <button class="btn btn-primary-custom">
+                            <i class="bi bi-play-circle me-2"></i>Continue Learning
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

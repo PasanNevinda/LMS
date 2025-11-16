@@ -1,0 +1,110 @@
+﻿@using LMS.Models.Entities
+@using LMS.ViewModels.Student_ViewModles
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@model CourseBrowse 
+
+@{
+   
+    Layout = SignInManager.IsSignedIn(User) && User.IsInRole("Student") ? "_StudentLayout" : "~/Views/Home/_HomeLayout.cshtml";
+}
+
+
+<!-- Browse Courses View -->
+<div id="browseView" style="display: block;">
+    <div class="page-header text-center">
+        <div class="container-fluid px-1">
+            <h1 class="page-title">Browse Courses</h1>
+            <p class="text-muted">Explore our collection of courses</p>
+        </div>
+    </div>
+
+    <div class="filters-container sticky-top bg-white py-3" style="top: 0; z-index: 900;">
+        <div class="container-fluid px-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div class="filters-wrapper d-flex flex-column flex-md-row align-items-md-center gap-3 w-100">
+                    <div class="search-wrapper">
+                        <input asp-for="SearchString" type="text" id="courseSearch" class="form-control search-box" placeholder="Search courses by name or instructor... ">
+                    </div>
+                    <div class="category-wrapper">
+                        <select asp-for="SelectedCategoryId" id="categoryFilter" class="form-select category-dropdown"
+                                asp-items="@(new SelectList(Model.categories, "Id", "Name", Model.SelectedCategoryId))">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4 mt-4">
+        <div class="row g-4">
+
+
+            @foreach( var course in Model.Courses)
+            {
+                <div class="col-md-3 col-sm-6 col-6">
+                    <a asp-controller="Student" asp-action="CourseDetails" asp-route-CourseId="@course.CourseId" class="course-link-wrapper">
+                    <div class="course-card">
+                        <div style="position: relative;">
+                            <img src="~/@course.CourseImage" class="course-image" alt="Course">
+                        </div>
+                        <div class="course-content">
+                            <h5 class="course-title">@course.CourseName</h5>
+                            <p class="course-instructor">By @course.TeacherName</p>
+                            <div class="course-stats mb-3">
+                                <span><i class="bi bi-star-fill text-warning me-1"></i>4.8 (2,456)</span>
+                                <span><i class="bi bi-clock me-1"></i>8h 30m</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="h5 mb-0">$@course.Price</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+            }
+
+           
+
+          
+        </div>
+    </div>
+</div>
+
+<nav aria-label="Course pagination" class="mt-5 d-flex justify-content-center">
+
+    @{
+        var startItem = (Model.Pager.CurrentPage - 1) * Model.Pager.PageSize + 1;
+        var endItem = Math.Min(startItem + Model.Pager.PageSize - 1, Model.Pager.TotalItems);
+    }
+
+    <ul class="pagination pagination-lg">
+        @if (Model.Pager.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" onclick="loadCourses(@Model.Pager.CurrentPage - 1)"
+                tabindex="-1" aria-disabled="false">
+                    <i class="bi bi-chevron-left"></i> Prev
+                </a>
+            </li>
+        }
+
+        @for (int p = Model.Pager.StartPage; p <= Model.Pager.EndPage; p++)
+        {
+            <li class="page-item @(p == Model.Pager.CurrentPage ? "active" : "")"><a class="page-link" onclick="loadCourses(@p); return false;">@p</a></li>
+        }
+
+        @if (Model.Pager.TotalItems > 0 &&  Model.Pager.CurrentPage != Model.Pager.TotalPages)
+        {
+            <li class="page-item @(Model.Pager.CurrentPage >= Model.Pager.TotalPages ? "disabled" : "")">
+                <a class="page-link" onclick="loadCourses(@Model.Pager.CurrentPage + 1)" )>
+                    Next <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        }
+        
+    </ul>
+</nav>

@@ -47,9 +47,8 @@ namespace LMS
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<ApplicationDbContext>();
                 await SeedService.SeedDbAsync(services);
-                List<string> TeacherEmails = new List<string> { "teacher1@test.com" };
-                await DbSeeder.SeedTeachersAsync(services, TeacherEmails);
-                DbSeeder.Seed(context);
+                await DbSeeder.SeedAsync(services,context);
+                
             }
 
             // Configure the HTTP request pipeline.
