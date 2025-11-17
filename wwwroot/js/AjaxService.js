@@ -10,6 +10,12 @@ class AjaxService {
     static globalErrorCallback = null;
     static debug = false;
 
+    static autoRedirectOnAuthFailure = true;
+    static setAutoRedirectOnAuthFailure(enabled) {
+        this.autoRedirectOnAuthFailure = !!enabled;
+    }
+
+
     static defaultRetryConfig = {
         maxRetries: 3,
         retryDelay: 1000, // ms
@@ -234,6 +240,29 @@ class AjaxService {
             }
         } catch (e) {
             // Parsing failed
+        }
+
+        if (response.status === 401 || response.status === 403) {
+            const result = {
+                success: false,
+                unauthorized: true,
+                status: response.status,
+                error: {
+                    message: data?.message || (response.status === 401 ? 'Unauthorized' : 'Forbidden'),
+                    status: response.status,
+                    data
+                }
+            };
+
+            // Optionally auto-redirect (client-side fallback)
+            if (this.autoRedirectOnAuthFailure) {
+                const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+                // change path if your Identity login path is different
+                window.location.href = `/Identity/Account/Login?ReturnUrl=${returnUrl}`;
+                // note: we still return the result in case caller needs it
+            }
+
+            return result;
         }
 
         if (!response.ok) {

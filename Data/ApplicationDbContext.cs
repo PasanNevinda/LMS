@@ -26,6 +26,9 @@ namespace LMS.Data
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Module> Modules { get; set; }
         public DbSet<Exam> Exams { get; set; }
+
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
        
 
         public DbSet<ContentItem> ContentItems { get; set; }
@@ -129,6 +132,19 @@ namespace LMS.Data
                 .WithMany(cat => cat.Courses)
                 .HasForeignKey(c => c.CategoryId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<CartItem>()
+                .HasOne(ci => ci.Cart)
+                .WithMany(c => c.Items)
+                .HasForeignKey(ci => ci.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<CartItem>()
+                .HasOne(ci => ci.Course)
+                .WithMany()
+                .HasForeignKey(ci => ci.CourseId)
+                .OnDelete(DeleteBehavior.NoAction);
+
 
         }
     }

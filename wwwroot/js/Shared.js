@@ -91,3 +91,42 @@ function showToast(message, type = 'success') {
         }
     }, 3000);
 }
+
+async function addToCart(courseId) {
+    const btn = event.currentTarget;
+
+    try {
+        const result = await AjaxService.post('/Student/AddToCart', { CourseId:courseId });
+
+        if (result.success && result.data.success) {
+            showToast("Course added to cart!", "success");
+
+            const newBtnHtml = `
+                <button class="btn-primary-custom disabled" 
+                        style="cursor: not-allowed; background-color: gray; color: white; border-color: gray;">
+                    <i class="bi bi-cart-plus me-2"></i>In the Cart
+                </button>
+            `;
+            btn.outerHTML = newBtnHtml;
+
+            // Update the cart badge
+            const badge = document.getElementById("cartBadge");
+            if (badge) {
+                let count = parseInt(badge.textContent) || 0;
+                badge.textContent = count + 1;
+
+                // Optional: small animation effect
+                badge.classList.add("cart-bounce");
+                setTimeout(() => badge.classList.remove("cart-bounce"), 300);
+            }
+        } else {
+            console.log(result);
+            
+            showToast(result.error?.message || "Failed to add to cart", "danger");
+        }
+
+    } catch (err) {
+        showToast("Something went wrong! Try again.", "danger");
+        console.error(err);
+    }
+}
