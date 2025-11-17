@@ -192,11 +192,25 @@
 
                         </div>
 
-                        <div class="d-grid gap-2 mb-3">
-                            <button class="btn-primary-custom" onclick="addToCart('nodejs')">
-                                <i class="bi bi-cart-plus me-2"></i>Add to cart
-                            </button>
-                        </div>
+                        @if(!Model.IntheCart)
+                        {
+                            
+                            <div class="d-grid gap-2 mb-3">
+                                <button class="btn-primary-custom" onclick="addToCart(@Model.CourseId)">
+                                    <i class="bi bi-cart-plus me-2"></i>Add to cart
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            
+                            <div class="d-grid gap-2 mb-3">
+                                <button class="btn-primary-custom disabled" style="cursor: not-allowed; background-color: gray; color: white; border-color: gray;">
+                                    <i class="bi bi-cart-plus me-2"></i>In the Cart
+                                </button>
+                            </div>
+                        }
+
 
 
 

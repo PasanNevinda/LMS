@@ -22,6 +22,42 @@ namespace LMS
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.Events.OnRedirectToLogin = ctx =>
+                {
+                    var isAjax = ctx.Request.Headers["X-Requested-With"] == "XMLHttpRequest"
+                                 || ctx.Request.Headers["Accept"].ToString().Contains("application/json");
+                    if (isAjax)
+                    {
+                        ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        return Task.CompletedTask;
+                    }
+                    ctx.Response.Redirect(ctx.RedirectUri);
+                    return Task.CompletedTask;
+                };
+
+                options.Events.OnRedirectToAccessDenied = ctx =>
+                {
+                    var isAjax = ctx.Request.Headers["X-Requested-With"] == "XMLHttpRequest"
+                                 || ctx.Request.Headers["Accept"].ToString().Contains("application/json");
+                    if (isAjax)
+                    {
+                        ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        return Task.CompletedTask;
+                    }
+                    ctx.Response.Redirect(ctx.RedirectUri);
+                    return Task.CompletedTask;
+                };
+
+            });
+
+
+
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddScoped<IFileStorage, LocalFileStorage>();

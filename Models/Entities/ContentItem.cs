@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NuGet.Packaging.Signing;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LMS.Models.Entities
@@ -14,7 +15,7 @@ namespace LMS.Models.Entities
         public string StageName { get; set; }
         public string Type {  get; set; }
         public int OrderNo { get; set; } = 0;
-
+        public int DurationInMinutes { get; set; } 
 
         // Fks
         [Required, ForeignKey(nameof(Module))]

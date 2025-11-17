@@ -20,6 +20,7 @@ namespace LMS.ViewModels.Student_ViewModles
         public string Language { get; set; } = string.Empty;
         public decimal Price { get; set; }
 
+        public Boolean IntheCart { get; set; }
 
 
         public string CourseImage { get; set; } = string.Empty;
