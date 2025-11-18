@@ -1,4 +1,4 @@
-﻿@page
+﻿@* @page
 @model RegisterModel
 @{
     ViewData["Title"] = "Register";
@@ -70,4 +70,105 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+} *@
+
+
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1><i class="bi bi-person-plus"></i> Create Account</h1>
+<h2>Join EduPlatform as @Model.Type</h2>
+
+<div class="auth-split">
+    <!-- Left Section - Registration Form -->
+    <div class="auth-main-section">
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="auth-form">
+            <input asp-for="Type" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="text-danger validation-summary-errors" role="alert"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Full Name" />
+                <label asp-for="Input.Name">Full Name</label>
+                <span asp-validation-for="Input.Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Email" class="form-control" autocomplete="email" aria-required="true" placeholder="name@example.com" />
+                <label asp-for="Input.Email">Email Address</label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" type="password" />
+                <label asp-for="Input.Password">Password</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" type="password" />
+                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <button id="registerSubmit" type="submit" class="btn btn-lg btn-primary">
+                <i class="bi bi-check-circle"></i> Create Account
+            </button>
+
+            <div class="auth-links text-center">
+                <p>
+                    Already have an account?
+                    <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">
+                        <i class="bi bi-box-arrow-in-right"></i> Sign in here
+                    </a>
+                </p>
+            </div>
+        </form>
+    </div>
+
+    <!-- Right Section - External Registration -->
+    <div class="auth-secondary-section">
+        <section>
+            <h3><i class="bi bi-link-45deg"></i> Quick Sign Up</h3>
+            <hr />
+            @{
+                if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                {
+                    <div class="info-box">
+                        <p>
+                            <i class="bi bi-info-circle"></i>
+                            No external authentication services are currently configured.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div class="d-grid gap-2">
+                            @foreach (var provider in Model.ExternalLogins!)
+                            {
+                                <button type="submit" class="btn btn-external" name="provider" value="@provider.Name">
+                                    <i class="bi bi-google"></i>
+                                    <span>Sign up with @provider.DisplayName</span>
+                                </button>
+                            }
+                        </div>
+                    </form>
+                }
+            }
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function() {
+            var btn = document.getElementById('registerSubmit');
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+        });
+    </script>
 }

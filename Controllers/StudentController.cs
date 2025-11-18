@@ -1,5 +1,4 @@
-﻿using AspNetCoreGeneratedDocument;
-using LMS.Data;
+﻿using LMS.Data;
 using LMS.Models.Entities;
 using LMS.ViewModels.Dashboard;
 using LMS.ViewModels.Student_ViewModles;

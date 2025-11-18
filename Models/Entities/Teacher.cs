@@ -15,7 +15,9 @@ namespace LMS.Models.Entities
         public ICollection<Course> Courses { get; set; } = new List<Course>();
         public ICollection<ContentItem> ContentItems { get; set; } = new List<ContentItem>();
 
-
+        public string? BankName { get; set; }
+        public string? AccountName { get; set; }
+        public string? AccountNumber { get; set; }
         // Teacher - Grade
         // Teacher - Subject many to many relationship need to be implemented later
 

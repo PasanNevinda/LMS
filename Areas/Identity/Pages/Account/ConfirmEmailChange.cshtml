@@ -1,0 +1,31 @@
+﻿@* @page
+@model ConfirmEmailChangeModel
+@{
+    ViewData["Title"] = "Confirm email change";
+}
+
+<h1>@ViewData["Title"]</h1>
+<partial name="_StatusMessage" model="Model.StatusMessage" /> *@
+
+
+@page
+@model ConfirmEmailChangeModel
+@{
+    ViewData["Title"] = "Email Change Confirmed";
+}
+
+<div class="auth-single">
+    <div class="success-message">
+        <div class="success-icon">
+            <i class="bi bi-check-circle"></i>
+        </div>
+        <h1>Email Updated!</h1>
+        <partial name="_StatusMessage" model="Model.StatusMessage" />
+
+        <div class="auth-links text-center mt-4">
+            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="btn btn-primary">
+                <i class="bi bi-person-circle"></i> Go to Profile
+            </a>
+        </div>
+    </div>
+</div>
