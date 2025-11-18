@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Identity.Client;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LMS.Models.Entities
@@ -18,9 +19,12 @@ namespace LMS.Models.Entities
         public string? BankName { get; set; }
         public string? AccountName { get; set; }
         public string? AccountNumber { get; set; }
+
+        public decimal AvailableBalance { get; set; }
+        public decimal LifetimeEarnings { get; set; }
         // Teacher - Grade
         // Teacher - Subject many to many relationship need to be implemented later
 
-
+        public ICollection<InstructorPayout> Payouts { get; set; } = new List<InstructorPayout>();
     }
 }

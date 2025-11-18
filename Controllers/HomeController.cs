@@ -28,7 +28,14 @@ namespace LMS.Controllers
         {
             if ((SignInManager.IsSignedIn(User)))
             {
+
                 var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    await SignInManager.SignOutAsync();
+                    return RedirectToAction("Index");
+                }
                 var roles = await _userManager.GetRolesAsync(user);
 
                 if (roles.Contains("Admin"))

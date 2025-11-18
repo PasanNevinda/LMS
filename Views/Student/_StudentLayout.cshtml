@@ -37,3 +37,12 @@
 
 </body>
 </html>
+
+@if (TempData["ToastMessage"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            showToast("@TempData["ToastMessage"]", "@TempData["ToastType"]");
+        });
+    </script>
+}

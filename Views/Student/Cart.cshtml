@@ -87,9 +87,11 @@
                             <strong>Total:</strong>
                             <strong id="total">$@Model.TotalAmount</strong>
                         </div>
-                        <button class="btn-primary-custom" onclick="checkout()">
-                            <i class="bi bi-credit-card me-2"></i>Checkout
-                        </button>
+                        <form asp-action="Checkout"  asp-controller="Student"  method="get">
+                            <button type="submit" class="btn-primary-custom" >
+                                <i class="bi bi-credit-card me-2"></i>Checkout
+                            </button>
+                        </form>
                     </div>
                 }
                     

@@ -64,7 +64,8 @@ namespace LMS
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ICourseService, CourseService>();
             builder.Services.AddScoped<IViewRenderService, ViewRenderService>();
-
+            builder.Services.AddScoped<IPaymentGateway, FakePaymentGateway>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
 
             // Add session services
             builder.Services.AddDistributedMemoryCache(); // Required for session

@@ -32,10 +32,15 @@ namespace LMS.Data
        
 
         public DbSet<ContentItem> ContentItems { get; set; }
-       // public DbSet<ContentItem> ContentUploads { get; set; }
-       // public DbSet<VideoContent> VideoContents { get; set; }
-      //  public DbSet<DocumentContent> DocumentContents { get; set; }
-       // public DbSet<LinkContent> LinkContents { get; set; }
+
+
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
+        public DbSet<InstructorPayout> InstructorPayouts { get; set; }
+        public DbSet<PlatformFinance> PlatformFinances { get; set; }
+        // public DbSet<ContentItem> ContentUploads { get; set; }
+        // public DbSet<VideoContent> VideoContents { get; set; }
+        //  public DbSet<DocumentContent> DocumentContents { get; set; }
+        // public DbSet<LinkContent> LinkContents { get; set; }
 
 
 
@@ -76,11 +81,38 @@ namespace LMS.Data
             .Property(c => c.Rating)
             .HasPrecision(2,1);
 
+
+            builder.Entity<Teacher>()
+        .Property(t => t.AvailableBalance)
+        .HasColumnType("decimal(18,2)");
+
+            builder.Entity<Teacher>()
+                .Property(t => t.LifetimeEarnings)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Entity<InstructorPayout>()
+                .Property(p => p.Amount)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Entity<PaymentTransaction>()
+                .Property(p => p.Amount)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Entity<PaymentTransaction>()
+                .Property(p => p.CommissionAmount)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Entity<PlatformFinance>()
+                .Property(p => p.TotalCommissionEarned)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Entity<PlatformFinance>()
+                .Property(p => p.TotalPaidToInstructors)
+                .HasColumnType("decimal(18,2)");
             // ----  Configuring relationships  --- //
 
             // Enrollment relationship
-            builder.Entity<Enrollment>()
-                .HasKey(e => new { e.StudentId, e.CourseId });
+
 
             builder.Entity<Enrollment>().HasOne(e => e.Student)
                 .WithMany(s => s.Enrollments)
@@ -90,7 +122,22 @@ namespace LMS.Data
             builder.Entity<Enrollment>().HasOne(e => e.Course)
                 .WithMany(c => c.Enrollments)
                 .HasForeignKey(e => e.CourseId)
-                 .OnDelete(DeleteBehavior.NoAction); 
+                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Enrollment>()
+            .HasOne(e => e.PaymentTransaction)
+            .WithMany(pt => pt.Enrollments)
+            .HasForeignKey(e => e.PaymentTransactionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
+            // PaymentTransaction -> Course (many-to-one)
+            builder.Entity<PaymentTransaction>()
+                .HasOne(pt => pt.Course)
+                .WithMany()
+                .HasForeignKey(pt => pt.CourseId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             //// ModuleContentItem relationship
             //builder.Entity<ModuleContentItem>()
@@ -145,6 +192,13 @@ namespace LMS.Data
                 .HasForeignKey(ci => ci.CourseId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+
+            builder.Entity<PlatformFinance>().HasData(new PlatformFinance
+            {
+                Id = 1,
+                TotalCommissionEarned = 0m,
+                TotalPaidToInstructors = 0m
+            });
 
         }
     }
