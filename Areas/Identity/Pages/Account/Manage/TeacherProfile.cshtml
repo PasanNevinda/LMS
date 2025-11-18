@@ -1,0 +1,72 @@
+﻿@page
+@model LMS.Areas.Identity.Pages.Account.Manage.TeacherProfileModel
+
+@{
+    ViewData["Title"] = "Bank Details";
+    ViewData["ActivePage"] = "TeacherProfile";
+}
+
+<h3><i class="bi bi-bank me-2"></i>Bank Account Information</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<!-- Bank Icon -->
+<div class="text-center mb-4">
+    <div class="bank-info-icon">
+        <i class="bi bi-credit-card-2-front"></i>
+    </div>
+    <p class="text-muted">Securely manage your payment information</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <form method="post">
+            <div class="form-floating mb-3">
+                <input asp-for="BankInfo.BankName" class="form-control" placeholder="Bank Name" />
+                <label asp-for="BankInfo.BankName">
+                    <i class="bi bi-building me-1"></i>Bank Name
+                </label>
+                <span asp-validation-for="BankInfo.BankName" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="BankInfo.AccountName" class="form-control" placeholder="Account Name" />
+                <label asp-for="BankInfo.AccountName">
+                    <i class="bi bi-person-badge me-1"></i>Account Holder Name
+                </label>
+                <span asp-validation-for="BankInfo.AccountName" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="BankInfo.AccountNumber" class="form-control" placeholder="Account Number" />
+                <label asp-for="BankInfo.AccountNumber">
+                    <i class="bi bi-hash me-1"></i>Account Number
+                </label>
+                <span asp-validation-for="BankInfo.AccountNumber" class="text-danger"></span>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-lg btn-primary">
+                    <i class="bi bi-check-circle me-2"></i>Save Bank Details
+                </button>
+            </div>
+        </form>
+
+        <!-- Security Information -->
+        <div class="security-badge mt-4">
+            <i class="bi bi-lock-fill"></i>
+            <p class="security-badge-text">
+                Your banking information is encrypted and stored securely. We never share your details with third parties.
+            </p>
+        </div>
+
+        <!-- Additional Info Card -->
+        <div class="alert alert-info mt-3">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Important:</strong> Ensure your bank details are accurate to receive timely payments for your courses.
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

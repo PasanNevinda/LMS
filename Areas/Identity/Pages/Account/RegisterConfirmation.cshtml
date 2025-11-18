@@ -1,0 +1,70 @@
+﻿@* @page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Register confirmation";
+}
+
+<h1>@ViewData["Title"]</h1>
+@{
+    if (@Model.DisplayConfirmAccountLink)
+    {
+<p>
+    This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these docs</a> for how to configure a real email sender.
+    Normally this would be emailed: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
+</p>
+    }
+    else
+    {
+<p>
+        Please check your email to confirm your account.
+</p>
+    }
+}
+ *@
+
+
+@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Registration Successful";
+}
+
+<div class="auth-single">
+    <div class="success-message">
+        <div class="success-icon">
+            <i class="bi bi-person-check"></i>
+        </div>
+        <h1>Welcome to EduPlatform!</h1>
+        @{
+            if (@Model.DisplayConfirmAccountLink)
+            {
+                <div class="info-box">
+                    <p>
+                        <i class="bi bi-exclamation-triangle"></i>
+                        This app does not currently have a real email sender registered, see
+                        <a href="https://aka.ms/aspaccountconf" target="_blank">these docs</a>
+                        for configuration.
+                    </p>
+                </div>
+                <div class="mt-3">
+                    <a id="confirm-link" href="@Model.EmailConfirmationUrl" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Confirm Your Account
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="confirmation-box">
+                    <p>
+                        <i class="bi bi-envelope-check"></i>
+                        Please check your email to confirm your account.
+                    </p>
+                    <p style="font-size: 14px; color: #666; margin-top: 12px;">
+                        Didn't receive the email? Check your spam folder or
+                        <a asp-page="./ResendEmailConfirmation">resend confirmation email</a>.
+                    </p>
+                </div>
+            }
+        }
+    </div>
+</div>

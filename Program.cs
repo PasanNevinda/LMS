@@ -75,6 +75,17 @@ namespace LMS
                 options.Cookie.IsEssential = true; // Required for GDPR compliance*/
             });
 
+
+            var google = builder.Configuration.GetSection("Authentication:Google");
+            builder.Services.AddAuthentication().
+                AddGoogle(options =>
+                {
+                    options.ClientId = google["ClientId"]!;
+                    options.ClientSecret = google["ClientSecret"]!;
+                    options.CallbackPath = "/signin-google";
+                });
+
+
             var app = builder.Build();
 
             // Seed roles and admin user
