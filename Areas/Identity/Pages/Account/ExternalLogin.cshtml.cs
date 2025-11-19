@@ -65,6 +65,9 @@ namespace LMS.Areas.Identity.Pages.Account
         /// </summary>
         public string ReturnUrl { get; set; }
 
+        [BindProperty(SupportsGet =true)]
+        public string Type { get; set; }
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -89,17 +92,18 @@ namespace LMS.Areas.Identity.Pages.Account
         
         public IActionResult OnGet() => RedirectToPage("./Login");
 
-        public IActionResult OnPost(string provider, string returnUrl = null)
+        public IActionResult OnPost(string provider, string returnUrl = null, string Type = null)
         {
             // Request a redirect to the external login provider.
-            var redirectUrl = Url.Page("./ExternalLogin", pageHandler: "Callback", values: new { returnUrl });
+            var redirectUrl = Url.Page("./ExternalLogin", pageHandler: "Callback", values: new { returnUrl,Type });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
         }
 
-        public async Task<IActionResult> OnGetCallbackAsync(string returnUrl = null, string remoteError = null)
+        public async Task<IActionResult> OnGetCallbackAsync(string returnUrl = null, string remoteError = null, string Type = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
+            this.Type = Type;
             if (remoteError != null)
             {
                 ErrorMessage = $"Error from external provider: {remoteError}";
@@ -141,9 +145,16 @@ namespace LMS.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
         {
+
             returnUrl = returnUrl ?? Url.Content("~/");
             // Get the information about the user from the external login provider
             var info = await _signInManager.GetExternalLoginInfoAsync();
+
+
+
+
+
+
             if (info == null)
             {
                 ErrorMessage = "Error loading external login information during confirmation.";
@@ -152,8 +163,30 @@ namespace LMS.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                ApplicationUser user;
+                // Create specific derived user based on Type
+                if (string.Equals(Type, "Teacher", StringComparison.OrdinalIgnoreCase))
+                {
+                    user = new Teacher
+                    {
+                        UserName = Input.Email, // or Input.Name if provided by external claim
+                        Email = Input.Email,
+                        RegistrationTime = DateTime.UtcNow,
+                        FullName = Input.Email // replace if you can get name claim
+                    };
+                }
+                else // default to Student
+                {
+                    user = new Student
+                    {
+                        UserName = Input.Email,
+                        Email = Input.Email,
+                        RegistrationTime = DateTime.UtcNow,
+                        FullName = Input.Email
+                    };
+                }
 
+                user.EmailConfirmed = true;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
@@ -163,27 +196,31 @@ namespace LMS.Areas.Identity.Pages.Account
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
+                        if (!string.IsNullOrEmpty(Type))
+                        {
+                            await _userManager.AddToRoleAsync(user, Type);
+                        }
+                        _logger.LogInformation($"User created a new {Type} account with password.");
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
-                        var userId = await _userManager.GetUserIdAsync(user);
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                        var callbackUrl = Url.Page(
-                            "/Account/ConfirmEmail",
-                            pageHandler: null,
-                            values: new { area = "Identity", userId = userId, code = code },
-                            protocol: Request.Scheme);
-
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                        // If account confirmation is required, we need to show the link if we don't have a real email sender
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        {
-                            return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
-                        }
+                       
 
                         await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+
+                        var roles = await _userManager.GetRolesAsync(user);
+                        if (roles.Contains("Admin"))
+                        {
+                            return RedirectToAction("AdminDashBoard", "Admin");
+                        }
+                        else if (roles.Contains("Teacher"))
+                        {
+                            return RedirectToAction("TeacherDashBoard", "Teacher");
+                        }
+                        else if (roles.Contains("Student"))
+                        {
+                            return RedirectToAction("StudentDashBoard", "Student");
+                        }
+
                         return LocalRedirect(returnUrl);
                     }
                 }

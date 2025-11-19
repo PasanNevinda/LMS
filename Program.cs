@@ -1,9 +1,10 @@
-using System.Threading.Tasks;
 using LMS.Data;
 using LMS.Models.Entities;
 using LMS.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace LMS
 {
@@ -84,6 +85,7 @@ namespace LMS
                     options.ClientId = google["ClientId"]!;
                     options.ClientSecret = google["ClientSecret"]!;
                     options.CallbackPath = "/signin-google";
+
                 });
 
 
