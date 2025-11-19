@@ -165,8 +165,8 @@ namespace LMS.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation($"User created a new {Type} account with password.");
                     await _userManager.AddToRoleAsync(user, Type);
+                    _logger.LogInformation($"User created a new {Type} account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

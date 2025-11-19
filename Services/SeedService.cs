@@ -1,4 +1,5 @@
 ﻿using LMS.Data;
+using LMS.Helpers;
 using LMS.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ namespace LMS.Services
                 }
 
                 // seed admin user
-                var adminEmail = "mainadmin@xyz.com";
+                var adminEmail = "admin@lms.com";
                 var adminPassword = "Admin123@";
 
                 var adminUser = await userManager.FindByEmailAsync(adminEmail);
@@ -82,9 +83,9 @@ namespace LMS.Services
     public static class DbSeeder
     {
         // -----------------------------------------------------------------------
-        // Helper – create 10 teachers + 4 students if they are missing
+        // Helper – create 10 teachers + 4 students + 1 admin if they are missing
         // -----------------------------------------------------------------------
-        private static async Task EnsureTeachersAndStudentsAsync(IServiceProvider services)
+        private static async Task EnsureUsersAsync(IServiceProvider services)
         {
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
@@ -98,7 +99,6 @@ namespace LMS.Services
             var teacherEmails = Enumerable.Range(1, 10)
                                           .Select(i => $"teacher{i}@lms.com")
                                           .ToList();
-
             int tIdx = 1;
             foreach (var email in teacherEmails)
             {
@@ -106,7 +106,6 @@ namespace LMS.Services
                 {
                     var teacher = new Teacher
                     {
-                        Id = Guid.NewGuid().ToString(),
                         UserName = email,
                         Email = email,
                         FullName = $"Teacher {tIdx}",
@@ -123,7 +122,6 @@ namespace LMS.Services
             var studentEmails = Enumerable.Range(1, 4)
                                           .Select(i => $"student{i}@lms.com")
                                           .ToList();
-
             int sIdx = 1;
             foreach (var email in studentEmails)
             {
@@ -131,7 +129,6 @@ namespace LMS.Services
                 {
                     var student = new Student
                     {
-                        Id = Guid.NewGuid().ToString(),
                         UserName = email,
                         Email = email,
                         FullName = $"Student {sIdx}",
@@ -153,11 +150,14 @@ namespace LMS.Services
             // 1. Make sure DB exists
             await context.Database.EnsureCreatedAsync();
 
-            // 2. Teachers + Students (10 teachers, 4 students)
-            await EnsureTeachersAndStudentsAsync(services);
+            // 2. Users (10 teachers, 4 students, 1 admin)
+            await EnsureUsersAsync(services);
 
             var loggerFactory = services.GetRequiredService<ILoggerFactory>();
             var logger = loggerFactory.CreateLogger("LMS.DbSeeder");
+
+            // Commission rate (hardcoded as per config)
+            decimal commissionRate = 0.15m;
 
             // -------------------------------------------------------------------
             // CATEGORIES (unchanged)
@@ -167,10 +167,10 @@ namespace LMS.Services
                 var categories = new[]
                 {
                 new Category { Name = "Programming", Description = "Learn programming languages", IsActive = true },
-                new Category { Name = "Design",       Description = "Learn design principles",    IsActive = true },
-                new Category { Name = "Mathematics",  Description = "Learn math topics",         IsActive = true },
-                new Category { Name = "Art",          Description = "Learn art topics",          IsActive = true },
-                new Category { Name = "Science",      Description = "Learn science topics",      IsActive = true },
+                new Category { Name = "Design", Description = "Learn design principles", IsActive = true },
+                new Category { Name = "Mathematics", Description = "Learn math topics", IsActive = true },
+                new Category { Name = "Art", Description = "Learn art topics", IsActive = true },
+                new Category { Name = "Science", Description = "Learn science topics", IsActive = true },
             };
                 context.Categories.AddRange(categories);
                 await context.SaveChangesAsync();
@@ -179,7 +179,7 @@ namespace LMS.Services
             // -------------------------------------------------------------------
             // FETCH COMMON ENTITIES
             // -------------------------------------------------------------------
-            var admin = await context.Admins.FirstAsync();               // main admin (created by SeedService)
+            var admin = await context.Admins.FirstOrDefaultAsync(a => a.Email == "admin@lms.com");
             var teacher1 = await context.Teachers.OrderBy(t => t.Id).FirstAsync();
             var teacher2 = await context.Teachers.OrderBy(t => t.Id).Skip(1).FirstAsync();
             var progCat = await context.Categories.FirstAsync(c => c.Name == "Programming");
@@ -295,14 +295,17 @@ namespace LMS.Services
 
                 context.Courses.AddRange(fullCourses);
                 await context.SaveChangesAsync();
+            }
 
-                // ----------------------------------------------------------------
-                // MODULES + CONTENT ITEMS (only for Published & Approved)
-                // ----------------------------------------------------------------
-                var targetCourses = await context.Courses
-                    .Where(c => c.Status == CourseStatus.Published || c.Status == CourseStatus.Approved)
-                    .ToListAsync();
-
+            // ----------------------------------------------------------------
+            // MODULES + CONTENT ITEMS (only for Published & Approved)
+            // ----------------------------------------------------------------
+            var targetCourses = await context.Courses
+                .ToListAsync();
+            if (!context.Modules.Any())
+            {
+                var now = DateTime.UtcNow;
+                var rnd = new Random();
                 foreach (var course in targetCourses)
                 {
                     // 2-4 modules per course
@@ -338,13 +341,82 @@ namespace LMS.Services
                                 UpdateTime = now
                             });
                         }
+                        await context.SaveChangesAsync();
                     }
                 }
-                await context.SaveChangesAsync();
+            }
 
-                // ----------------------------------------------------------------
-                // ENROLLMENTS (4 students → random Published courses)
-                // ----------------------------------------------------------------
+            // ----------------------------------------------------------------
+            // ENROLLMENTS WITH PAYMENTS (4 students → random Published courses)
+            // ----------------------------------------------------------------
+            if (!context.Enrollments.Any())
+            {
+                var now = DateTime.UtcNow;
+                var rnd = new Random();
+                var students = await context.Students.Take(4).ToListAsync();
+                var publishedCourses = await context.Courses
+                    .Include(c => c.Teacher)
+                    .Where(c => c.Status == CourseStatus.Published)
+                    .ToListAsync();
+
+                var finance = await context.PlatformFinances.FirstOrDefaultAsync(p => p.Id == 1);
+                if (finance == null)
+                {
+                    finance = new PlatformFinance { Id = 1, TotalCommissionEarned = 0m, TotalPaidToInstructors = 0m };
+                    context.PlatformFinances.Add(finance);
+                    await context.SaveChangesAsync();
+                }
+
+                foreach (var s in students)
+                {
+                    // each student enrolls in 2-4 random published courses (with simulated payment)
+                    var enrollCount = rnd.Next(2, 5);
+                    var chosen = publishedCourses.OrderBy(_ => Guid.NewGuid()).Take(enrollCount).ToList();
+                    foreach (var c in chosen)
+                    {
+                        if (!context.Enrollments.Any(e => e.StudentId == s.Id && e.CourseId == c.CourseId))
+                        {
+                            // Simulate payment
+                            var amount = Money.Round(c.Price);
+                            var platformFee = Money.Round(amount * commissionRate);
+                            var instructorShare = Money.Round(amount - platformFee);
+
+                            var payment = new PaymentTransaction
+                            {
+                                StudentId = s.Id,
+                                CourseId = c.CourseId,
+                                Amount = amount,
+                                CommissionAmount = platformFee,
+                                TransactionId = $"SEED-{Guid.NewGuid().ToString().Substring(0, 8)}",
+                                PaymentTime = now,
+                            };
+                            context.PaymentTransactions.Add(payment);
+                            await context.SaveChangesAsync(); // Save to get Id
+
+                            c.Teacher.AvailableBalance += instructorShare;
+                            c.Teacher.LifetimeEarnings += instructorShare;
+                            finance.TotalCommissionEarned = Money.Round(finance.TotalCommissionEarned + platformFee);
+
+                            var enrollment = new Enrollment
+                            {
+                                StudentId = s.Id,
+                                CourseId = c.CourseId,
+                                PaymentTransactionId = payment.Id,
+                                EnrolledTime = now
+                            };
+                            context.Enrollments.Add(enrollment);
+                            await context.SaveChangesAsync();
+                        }
+                    }
+                }
+            }
+
+            // ----------------------------------------------------------------
+            // CARTS WITH UNENROLLED COURSES
+            // ----------------------------------------------------------------
+            if (!context.Carts.Any())
+            {
+                var rnd = new Random();
                 var students = await context.Students.Take(4).ToListAsync();
                 var publishedCourses = await context.Courses
                     .Where(c => c.Status == CourseStatus.Published)
@@ -352,35 +424,407 @@ namespace LMS.Services
 
                 foreach (var s in students)
                 {
-                    // each student enrolls in 2-4 random published courses
-                    var enrollCount = rnd.Next(2, 5);
-                    var chosen = publishedCourses.OrderBy(_ => Guid.NewGuid()).Take(enrollCount);
-                    foreach (var c in chosen)
+                    // Create cart if not exists
+                    var cart = await context.Carts.FirstOrDefaultAsync(ca => ca.UserId == s.Id);
+                    if (cart == null)
                     {
-                        if (!context.Enrollments.Any(e => e.StudentId == s.Id && e.CourseId == c.CourseId))
-                            context.Enrollments.Add(new Enrollment { StudentId = s.Id, CourseId = c.CourseId });
+                        cart = new Cart { UserId = s.Id };
+                        context.Carts.Add(cart);
+                        await context.SaveChangesAsync();
                     }
-                }
-                await context.SaveChangesAsync();
 
-                // ----------------------------------------------------------------
-                // EXAMS (one per Published/Approved course)
-                // ----------------------------------------------------------------
-                foreach (var c in targetCourses)
-                {
-                    context.Exams.Add(new Exam
+                    // Get enrolled course ids for this student
+                    var enrolledIds = await context.Enrollments
+                        .Where(e => e.StudentId == s.Id)
+                        .Select(e => e.CourseId)
+                        .ToListAsync();
+
+                    // Get unenrolled published courses
+                    var unenrolledPublished = publishedCourses
+                        .Where(c => !enrolledIds.Contains(c.CourseId))
+                        .OrderBy(_ => Guid.NewGuid())
+                        .Take(rnd.Next(1, 4)) // 1-3 items
+                        .ToList();
+
+                    foreach (var c in unenrolledPublished)
                     {
-                        Name = $"Final Exam – {c.Name}",
-                        CourseId = c.CourseId,
-                        StartTime = now.AddDays(rnd.Next(2, 10))
-                    });
+                        if (!context.CartItems.Any(ci => ci.CartId == cart.Id && ci.CourseId == c.CourseId))
+                        {
+                            context.CartItems.Add(new CartItem { CartId = cart.Id, CourseId = c.CourseId });
+                        }
+                    }
+                    await context.SaveChangesAsync();
                 }
-                await context.SaveChangesAsync();
-
-                logger.LogInformation("Database seeded with all requested data.");
             }
+
+
+            // ----------------------------------------------------------------
+            // OPTIONAL: SOME PAYOUTS FOR TEACHERS
+            // ----------------------------------------------------------------
+            if (!context.InstructorPayouts.Any())
+            {
+                var rnd = new Random();
+                var teachersWithBalance = await context.Teachers
+                    .Where(t => t.AvailableBalance > 0)
+                    .ToListAsync();
+
+                //foreach (var t in teachersWithBalance.Take(2)) // e.g., first 2 teachers
+                //{
+                //    // Assume teachers have bank details seeded (you can add if needed)
+                //    if (string.IsNullOrEmpty(t.AccountNumber))
+                //    {
+                //        t.AccountNumber = $"ACC-{Guid.NewGuid().ToString().Substring(0, 8)}";
+                //        t.BankName = "Seed Bank";
+                //        t.AccountName = t.FullName;
+                //    }
+
+                //    // Pending payout
+                //    var pendingAmount = Money.Round(t.AvailableBalance / 3);
+                //    if (pendingAmount > 0)
+                //    {
+                //        context.InstructorPayouts.Add(new InstructorPayout
+                //        {
+                //            TeacherId = t.Id,
+                //            Amount = pendingAmount,
+                //            RequestedAt = DateTime.UtcNow.AddDays(-rnd.Next(1, 5)),
+                //            Status = PayoutStatus.Pending,
+                //            BankAccountNo = t.AccountNumber
+                //        });
+                //    }
+
+                //    // Paid payout (simulate approval)
+                //    var paidAmount = Money.Round(t.AvailableBalance / 3);
+                //    if (paidAmount > 0)
+                //    {
+                //        var payout = new InstructorPayout
+                //        {
+                //            TeacherId = t.Id,
+                //            Amount = paidAmount,
+                //            RequestedAt = DateTime.UtcNow.AddDays(-rnd.Next(6, 10)),
+                //            Status = PayoutStatus.Paid,
+                //            PaidAt = DateTime.UtcNow.AddDays(-rnd.Next(1, 5)),
+                //            BankAccountNo = t.AccountNumber
+                //        };
+                //        context.InstructorPayouts.Add(payout);
+                //        t.AvailableBalance -= paidAmount;
+
+                //        var finance = await context.PlatformFinances.FirstOrDefaultAsync(p => p.Id == 1);
+                //        if (finance != null)
+                //        {
+                //            finance.TotalPaidToInstructors = Money.Round(finance.TotalPaidToInstructors + paidAmount);
+                //        }
+                //    }
+                //    await context.SaveChangesAsync();
+                //}
+            }
+
+            logger.LogInformation("Database seeded with all requested data.");
         }
     }
+}
+
+    //public static class DbSeeder
+    //{
+    //    // -----------------------------------------------------------------------
+    //    // Helper – create 10 teachers + 4 students if they are missing
+    //    // -----------------------------------------------------------------------
+    //    private static async Task EnsureTeachersAndStudentsAsync(IServiceProvider services)
+    //    {
+    //        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    //        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    //        // ---- ROLES ----
+    //        foreach (var r in new[] { "Teacher", "Student" })
+    //            if (!await roleManager.RoleExistsAsync(r))
+    //                await roleManager.CreateAsync(new IdentityRole(r));
+
+    //        // ---- TEACHERS (10) ----
+    //        var teacherEmails = Enumerable.Range(1, 10)
+    //                                      .Select(i => $"teacher{i}@lms.com")
+    //                                      .ToList();
+
+    //        int tIdx = 1;
+    //        foreach (var email in teacherEmails)
+    //        {
+    //            if (await userManager.FindByEmailAsync(email) == null)
+    //            {
+    //                var teacher = new Teacher
+    //                {
+    //                    Id = Guid.NewGuid().ToString(),
+    //                    UserName = email,
+    //                    Email = email,
+    //                    FullName = $"Teacher {tIdx}",
+    //                    EmailConfirmed = true
+    //                };
+    //                var res = await userManager.CreateAsync(teacher, "Teacher@123");
+    //                if (res.Succeeded) await userManager.AddToRoleAsync(teacher, "Teacher");
+    //                else throw new Exception(string.Join(", ", res.Errors.Select(e => e.Description)));
+    //            }
+    //            tIdx++;
+    //        }
+
+    //        // ---- STUDENTS (4) ----
+    //        var studentEmails = Enumerable.Range(1, 4)
+    //                                      .Select(i => $"student{i}@lms.com")
+    //                                      .ToList();
+
+    //        int sIdx = 1;
+    //        foreach (var email in studentEmails)
+    //        {
+    //            if (await userManager.FindByEmailAsync(email) == null)
+    //            {
+    //                var student = new Student
+    //                {
+    //                    Id = Guid.NewGuid().ToString(),
+    //                    UserName = email,
+    //                    Email = email,
+    //                    FullName = $"Student {sIdx}",
+    //                    EmailConfirmed = true
+    //                };
+    //                var res = await userManager.CreateAsync(student, "Student@123");
+    //                if (res.Succeeded) await userManager.AddToRoleAsync(student, "Student");
+    //                else throw new Exception(string.Join(", ", res.Errors.Select(e => e.Description)));
+    //            }
+    //            sIdx++;
+    //        }
+    //    }
+
+    //    // -----------------------------------------------------------------------
+    //    // MAIN SEED METHOD
+    //    // -----------------------------------------------------------------------
+    //    public static async Task SeedAsync(IServiceProvider services, ApplicationDbContext context)
+    //    {
+    //        // 1. Make sure DB exists
+    //        await context.Database.EnsureCreatedAsync();
+
+    //        // 2. Teachers + Students (10 teachers, 4 students)
+    //        await EnsureTeachersAndStudentsAsync(services);
+
+    //        var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+    //        var logger = loggerFactory.CreateLogger("LMS.DbSeeder");
+
+    //        // -------------------------------------------------------------------
+    //        // CATEGORIES (unchanged)
+    //        // -------------------------------------------------------------------
+    //        if (!context.Categories.Any())
+    //        {
+    //            var categories = new[]
+    //            {
+    //            new Category { Name = "Programming", Description = "Learn programming languages", IsActive = true },
+    //            new Category { Name = "Design",       Description = "Learn design principles",    IsActive = true },
+    //            new Category { Name = "Mathematics",  Description = "Learn math topics",         IsActive = true },
+    //            new Category { Name = "Art",          Description = "Learn art topics",          IsActive = true },
+    //            new Category { Name = "Science",      Description = "Learn science topics",      IsActive = true },
+    //        };
+    //            context.Categories.AddRange(categories);
+    //            await context.SaveChangesAsync();
+    //        }
+
+    //        // -------------------------------------------------------------------
+    //        // FETCH COMMON ENTITIES
+    //        // -------------------------------------------------------------------
+    //        var admin = await context.Admins.FirstAsync();               // main admin (created by SeedService)
+    //        var teacher1 = await context.Teachers.OrderBy(t => t.Id).FirstAsync();
+    //        var teacher2 = await context.Teachers.OrderBy(t => t.Id).Skip(1).FirstAsync();
+    //        var progCat = await context.Categories.FirstAsync(c => c.Name == "Programming");
+    //        var mathCat = await context.Categories.FirstAsync(c => c.Name == "Mathematics");
+    //        var scienceCat = await context.Categories.FirstAsync(c => c.Name == "Science");
+    //        var artCat = await context.Categories.FirstAsync(c => c.Name == "Art");
+
+    //        // -------------------------------------------------------------------
+    //        // COURSES
+    //        // -------------------------------------------------------------------
+    //        if (!context.Courses.Any())
+    //        {
+    //            var now = DateTime.UtcNow;
+    //            var rnd = new Random();
+
+    //            // ---------- DRAFT (4) – only teacher1 & teacher2, partial data ----------
+    //            var drafts = new List<Course>
+    //        {
+    //            new Course {
+    //                Name = "Draft – C# Intro (T1)", Description = "Partial draft",
+    //                Language = Language.English, TeacherId = teacher1.Id,
+    //                CategoryId = progCat.Id, Status = CourseStatus.Draft,
+    //                Price = 0, CreatedAt = now.AddDays(-3), UpdatedAt = now.AddDays(-1)
+    //            },
+    //            new Course {
+    //                Name = "Draft – OOP Basics (T1)", Description = "Partial draft",
+    //                Language = Language.English, TeacherId = teacher1.Id,
+    //                CategoryId = progCat.Id, Status = CourseStatus.Draft,
+    //                Price = 0, CreatedAt = now.AddDays(-4), UpdatedAt = now.AddDays(-2)
+    //            },
+    //            new Course {
+    //                Name = "Draft – Calculus Intro (T2)", Description = "Partial draft",
+    //                Language = Language.English, TeacherId = teacher2.Id,
+    //                CategoryId = mathCat.Id, Status = CourseStatus.Draft,
+    //                Price = 0, CreatedAt = now.AddDays(-5), UpdatedAt = now.AddDays(-1)
+    //            },
+    //            new Course {
+    //                Name = "Draft – Physics Basics (T2)", Description = "Partial draft",
+    //                Language = Language.English, TeacherId = teacher2.Id,
+    //                CategoryId = scienceCat.Id, Status = CourseStatus.Draft,
+    //                Price = 0, CreatedAt = now.AddDays(-6), UpdatedAt = now.AddDays(-2)
+    //            }
+    //        };
+    //            context.Courses.AddRange(drafts);
+    //            await context.SaveChangesAsync();
+
+    //            // ---------- FULL DETAIL COURSES ----------
+    //            var fullCourses = new List<Course>();
+
+    //            // Helper to create a **full** course
+    //            Action<string, string, Language, string, Category, CourseStatus, decimal> addFull = (
+    //                name, desc, lang, teacherId, cat, status, price) =>
+    //            {
+    //                fullCourses.Add(new Course
+    //                {
+    //                    Name = name,
+    //                    Description = desc,
+    //                    Language = lang,
+    //                    TeacherId = teacherId,
+    //                    CategoryId = cat.Id,
+    //                    Status = status,
+    //                    Price = price,
+    //                    CourseImage = "uploads/Images/courseimg.jpg",
+    //                    PromotionVideo = "uploads/Videos/promvideo.mp4",
+    //                    CreatedAt = now.AddDays(-rnd.Next(5, 15)),
+    //                    UpdatedAt = now.AddDays(-rnd.Next(1, 4)),
+    //                    ReviewedById = admin.Id,
+    //                    ReviewedBy = admin,
+    //                    ReviewedAt = now.AddDays(-rnd.Next(1, 3)),
+    //                    ReviewNotes = status == CourseStatus.Published || status == CourseStatus.Approved
+    //                                  ? "Approved for publishing"
+    //                                  : status == CourseStatus.Rejected
+    //                                    ? "Not suitable – " + rnd.Next(1, 100)
+    //                                    : "Pending review"
+    //                });
+    //            };
+
+    //            // ---- 8 PUBLISHED -------------------------------------------------
+    //            for (int i = 1; i <= 8; i++)
+    //            {
+    //                var t = (i % 2 == 0) ? teacher1.Id : teacher2.Id;
+    //                var cat = i <= 3 ? progCat : i <= 5 ? mathCat : scienceCat;
+    //                addFull($"Published Course {i}", $"Full description for published course {i}",
+    //                        Language.English, t, cat, CourseStatus.Published, 49.99m + i);
+    //            }
+
+    //            // ---- 5 PENDING ---------------------------------------------------
+    //            for (int i = 1; i <= 5; i++)
+    //            {
+    //                var t = (i % 2 == 0) ? teacher1.Id : teacher2.Id;
+    //                var cat = i <= 2 ? progCat : artCat;
+    //                addFull($"Pending Course {i}", $"Awaiting admin review – pending {i}",
+    //                        Language.English, t, cat, CourseStatus.Pending, 39.99m + i);
+    //            }
+
+    //            // ---- 5 APPROVED --------------------------------------------------
+    //            for (int i = 1; i <= 5; i++)
+    //            {
+    //                var t = (i % 2 == 0) ? teacher1.Id : teacher2.Id;
+    //                var cat = i <= 3 ? scienceCat : mathCat;
+    //                addFull($"Approved Course {i}", $"Ready to publish – approved {i}",
+    //                        Language.English, t, cat, CourseStatus.Approved, 59.99m + i);
+    //            }
+
+    //            // ---- 5 REJECTED --------------------------------------------------
+    //            for (int i = 1; i <= 5; i++)
+    //            {
+    //                var t = (i % 2 == 0) ? teacher1.Id : teacher2.Id;
+    //                var cat = i <= 2 ? progCat : artCat;
+    //                addFull($"Rejected Course {i}", $"Did not meet quality standards – rejected {i}",
+    //                        Language.English, t, cat, CourseStatus.Rejected, 29.99m + i);
+    //            }
+
+    //            context.Courses.AddRange(fullCourses);
+    //            await context.SaveChangesAsync();
+
+    //            // ----------------------------------------------------------------
+    //            // MODULES + CONTENT ITEMS (only for Published & Approved)
+    //            // ----------------------------------------------------------------
+    //            var targetCourses = await context.Courses
+    //                .Where(c => c.Status == CourseStatus.Published || c.Status == CourseStatus.Approved)
+    //                .ToListAsync();
+
+    //            foreach (var course in targetCourses)
+    //            {
+    //                // 2-4 modules per course
+    //                int modCount = rnd.Next(2, 5);
+    //                for (int m = 1; m <= modCount; m++)
+    //                {
+    //                    var module = new Module
+    //                    {
+    //                        Name = $"Module {m} – {course.Name}",
+    //                        Description = $"Module {m} description",
+    //                        CourseId = course.CourseId,
+    //                        OrderNo = m,
+    //                        CreatedAt = now.AddDays(-rnd.Next(1, 10)),
+    //                        UpdatedAt = now.AddDays(-rnd.Next(1, 3))
+    //                    };
+    //                    context.Modules.Add(module);
+    //                    await context.SaveChangesAsync();
+
+    //                    // 2-5 content items per module (mix of Video & Document)
+    //                    int items = rnd.Next(2, 6);
+    //                    for (int ci = 1; ci <= items; ci++)
+    //                    {
+    //                        bool isVideo = ci % 2 == 0;
+    //                        context.ContentItems.Add(new ContentItem
+    //                        {
+    //                            Description = isVideo ? $"Video lesson {ci}" : $"Document {ci}",
+    //                            FilePath = isVideo ? "uploads/Videos/coursevideo.mp4" : "uploads/Documents/coursedoc.pdf",
+    //                            StageName = isVideo ? "Video" : "Document",
+    //                            Type = isVideo ? "Video" : "Document",
+    //                            OrderNo = ci,
+    //                            ModuleId = module.ModuleId,
+    //                            CreatedAt = now,
+    //                            UpdateTime = now
+    //                        });
+    //                    }
+    //                }
+    //            }
+    //            await context.SaveChangesAsync();
+
+    //            // ----------------------------------------------------------------
+    //            // ENROLLMENTS (4 students → random Published courses)
+    //            // ----------------------------------------------------------------
+    //            var students = await context.Students.Take(4).ToListAsync();
+    //            var publishedCourses = await context.Courses
+    //                .Where(c => c.Status == CourseStatus.Published)
+    //                .ToListAsync();
+
+    //            foreach (var s in students)
+    //            {
+    //                // each student enrolls in 2-4 random published courses
+    //                var enrollCount = rnd.Next(2, 5);
+    //                var chosen = publishedCourses.OrderBy(_ => Guid.NewGuid()).Take(enrollCount);
+    //                foreach (var c in chosen)
+    //                {
+    //                    if (!context.Enrollments.Any(e => e.StudentId == s.Id && e.CourseId == c.CourseId))
+    //                        context.Enrollments.Add(new Enrollment { StudentId = s.Id, CourseId = c.CourseId });
+    //                }
+    //            }
+    //            await context.SaveChangesAsync();
+
+    //            // ----------------------------------------------------------------
+    //            // EXAMS (one per Published/Approved course)
+    //            // ----------------------------------------------------------------
+    //            foreach (var c in targetCourses)
+    //            {
+    //                context.Exams.Add(new Exam
+    //                {
+    //                    Name = $"Final Exam – {c.Name}",
+    //                    CourseId = c.CourseId,
+    //                    StartTime = now.AddDays(rnd.Next(2, 10))
+    //                });
+    //            }
+    //            await context.SaveChangesAsync();
+
+    //            logger.LogInformation("Database seeded with all requested data.");
+    //        }
+    //    }
+    //}
 
     //public static class DbSeeder
     //{
@@ -723,6 +1167,6 @@ namespace LMS.Services
     //        }
     //    }
     //}
-}
+
 
 

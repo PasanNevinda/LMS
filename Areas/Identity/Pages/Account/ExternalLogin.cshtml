@@ -50,6 +50,7 @@
     </p>
 
     <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="auth-form">
+        <input asp-for="Type" type="hidden" />
         <div asp-validation-summary="ModelOnly" class="text-danger validation-summary-errors" role="alert"></div>
 
         <div class="form-floating mb-3">

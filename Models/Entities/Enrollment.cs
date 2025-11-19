@@ -9,6 +9,8 @@ namespace LMS.Models.Entities
     /// </summary>
     public class Enrollment
     {
+        public int Id { get; set; }
+
         [Required, ForeignKey(nameof(Student))]
         public string StudentId { get; set; }
 
@@ -18,10 +20,12 @@ namespace LMS.Models.Entities
 
         public DateTime EnrolledTime { get; set; } = DateTime.UtcNow;
 
-        
+        public int? PaymentTransactionId { get; set; }
+
 
         // Navigation Properties
         public Student Student { get; set; }
         public Course Course { get; set; }
+        public PaymentTransaction PaymentTransaction { get; set; }
     }
 }

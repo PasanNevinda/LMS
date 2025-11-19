@@ -1,9 +1,10 @@
-using System.Threading.Tasks;
 using LMS.Data;
 using LMS.Models.Entities;
 using LMS.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace LMS
 {
@@ -64,7 +65,8 @@ namespace LMS
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ICourseService, CourseService>();
             builder.Services.AddScoped<IViewRenderService, ViewRenderService>();
-
+            builder.Services.AddScoped<IPaymentGateway, FakePaymentGateway>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
 
             // Add session services
             builder.Services.AddDistributedMemoryCache(); // Required for session
@@ -83,6 +85,7 @@ namespace LMS
                     options.ClientId = google["ClientId"]!;
                     options.ClientSecret = google["ClientSecret"]!;
                     options.CallbackPath = "/signin-google";
+
                 });
 
 

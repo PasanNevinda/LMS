@@ -63,9 +63,9 @@ function showToast(message, type = 'success') {
             icon = 'exclamation-triangle-fill';
             color = 'var(--warning-color)';
             break;
-        case 'danger': // 🔥 Added danger
+        case 'danger': 
             icon = 'exclamation-octagon-fill';
-            color = 'var(--danger-color)'; // define: --danger-color: #dc3545;
+            color = 'var(--danger-color)';
             break;
         default:
             icon = 'info-circle-fill';

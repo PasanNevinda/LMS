@@ -20,6 +20,10 @@ namespace LMS.Models.Entities
 
         public ICollection<Course> ReviewedCourses { get; set; } = new List<Course>();
 
+        public string? BankName { get; set; }
+        public string? AccountName { get; set; }
+        public string? AccountNumber { get; set; }
+
         // Navigation Properties
         //public ApplicationUser User { get; set; }
 
