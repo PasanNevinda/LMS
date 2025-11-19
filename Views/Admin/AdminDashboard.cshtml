@@ -1,0 +1,184 @@
+﻿@using LMS.ViewModels.Admin_ViewModels
+@model DashboardViewModel
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+
+<!-- Dashboard Page -->
+<div class="page-section" id="dashboard">
+    <div class="dashboard-header">
+        <div class="container-fluid">
+            <h1>Welcome back, Admin!</h1>
+            <p class="mb-0">Here's what's happening with your learning platform today. <i class="bi bi-calendar3 ms-2"></i> @DateTime.UtcNow.ToString("MMMM dd, yyyy")</p>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted mb-1"><i class="bi bi-book me-1"></i>Total Courses</p>
+                            <h3 class="mb-0">@Model.TotalCourses</h3>
+                            <small class="text-success"><i class="bi bi-arrow-up me-1"></i> +@Model.TotalCourseIncrease% from last month</small>
+                        </div>
+                        <div class="stat-icon text-white" style="background: var(--primary-color);">
+                            <i class="bi bi-book"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted mb-1"><i class="bi bi-people me-1"></i>Active Students</p>
+                            <h3 class="mb-0">@Model.ActiveStudents</h3>
+                            <small class="text-success"><i class="bi bi-arrow-up me-1"></i> +@Model.TotalStudentIncrease% from last month</small>
+                        </div>
+                        <div class="stat-icon text-white" style="background: var(--success-color);">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted mb-1"><i class="bi bi-hourglass-split me-1"></i>Pending Reviews</p>
+                            <h3 class="mb-0">@Model.PendingReviews</h3>
+                            @if (Model.PendingReviews > 0)
+                            {
+                                <small class="text-warning"><i class="bi bi-exclamation-triangle me-1"></i> Needs attention</small>
+                            }
+                        </div>
+                        <div class="stat-icon text-white" style="background: var(--warning-color);">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted mb-1"><i class="bi bi-currency-dollar me-1"></i>Total Revenue</p>
+                            <h3 class="mb-0">$@Model.TotalRevenue</h3>
+                            <small class="text-success"><i class="bi bi-arrow-up me-1"></i> +@Model.TotalRevenueIncrease% from last month</small>
+                        </div>
+                        <div class="stat-icon text-white" style="background: var(--secondary-color);">
+                            <i class="bi bi-currency-dollar"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="data-table">
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Course Submissions</h5>
+                        <button class="btn btn-sm btn-outline-primary" data-page="courses">
+                            <i class="bi bi-arrow-right me-1"></i>View All
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th><i class="bi bi-book me-1"></i>Course Name</th>
+                                    <th><i class="bi bi-person me-1"></i>Instructor</th>
+                                    <th><i class="bi bi-tags me-1"></i>Category</th>
+                                    <th><i class="bi bi-circle-fill me-1"></i>Status</th>
+                                    <th><i class="bi bi-calendar me-1"></i>Submitted</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach(var course in Model.RecentCourses)
+                                {
+                                    
+                                    <tr>
+                                        <td>@course.Name</td>
+                                        <td>@course.Instructor</td>
+                                        <td>@course.Category</td>
+                                        <td><span class="status-badge status-pending">@course.Status</span></td>
+                                        
+                                            @{
+                                                var timeDifference = DateTime.UtcNow - course.Submitted;
+
+                                                if (timeDifference.TotalHours > 24)
+                                                {
+                                                <td>Submitted on @course.Submitted.ToString("MMM dd, yyyy")</td>
+                                                }
+                                                else
+                                                {
+                                                <td>Submitted @Math.Floor(timeDifference.TotalHours) hours ago</td>
+                                                }
+                                            }
+                                        @* <td>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-primary-custom" data-bs-toggle="tooltip" title="Review Details" onclick="showReviewCourseModal()">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success-custom" data-bs-toggle="tooltip" title="Approve" onclick="approveCourse(1)">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger-custom" data-bs-toggle="tooltip" title="Reject" onclick="rejectCourse(1)">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </button>
+                                            </div>
+                                        </td> *@
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="stat-card">
+                    <h5 class="mb-3"><i class="bi bi-lightning-charge me-2"></i>Quick Actions</h5>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary-custom" data-page="courses">
+                            <i class="bi bi-book me-2"></i>Review Pending Courses
+                        </button>
+                        <button class="btn btn-outline-primary" data-page="users">
+                            <i class="bi bi-people me-2"></i>Manage Users
+                        </button>
+                        <button class="btn btn-outline-primary" data-page="categories">
+                            <i class="bi bi-tags me-2"></i>Add Category
+                        </button>
+                        <button class="btn btn-outline-primary" data-page="analytics">
+                            <i class="bi bi-bar-chart me-2"></i>View Analytics
+                        </button>
+                        <button class="btn btn-outline-warning" data-page="rejected">
+                            <i class="bi bi-x-circle me-2"></i>Rejected Courses
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<!-- Course Review Modal -->
+<div class="modal fade" id="courseReviewModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-body" id="review-body">
+            <!-- server HTML inserted here -->
+        </div>
+    </div>
+</div>

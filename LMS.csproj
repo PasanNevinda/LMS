@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-LMS-5fd440b9-acb0-475b-8397-9e0af850b758</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Views\Content\**" />
+    <Compile Remove="Views\NewFolder1\**" />
+    <Content Remove="Views\Content\**" />
+    <Content Remove="Views\NewFolder1\**" />
+    <EmbeddedResource Remove="Views\Content\**" />
+    <EmbeddedResource Remove="Views\NewFolder1\**" />
+    <None Remove="Views\Content\**" />
+    <None Remove="Views\NewFolder1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\ContentController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.22" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.18" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.18" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.18" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.18" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.18" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+    <PackageReference Include="tusdotnet" Version="2.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\ContentVMs\" />
+  </ItemGroup>
+
+</Project>

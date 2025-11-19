@@ -1,0 +1,96 @@
+﻿ @model List<LMS.ViewModels.Dashboard.CourseVm>
+
+<div class="tab-pane fade" id="rejected" role="tabpanel">
+
+@if (Model?.Any() == true)
+{   
+    <div class="course-grid">
+
+    @foreach (var course in Model)
+    {
+
+                <!-- Sample Rejected Course Card -->
+                <div class="course-card" data-course-id="@course.CourseId">
+                    <div class="course-image" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+                        @if (!string.IsNullOrEmpty(course.ImagePath))
+                        {
+                            <img src="~/@course.ImagePath" alt="CourseImage">
+
+                        }
+                        else
+                        {
+                            <i class="bi bi-x-circle-fill"></i>
+                        }
+                        <span class="status-badge badge-rejected">Rejected</span>
+                    </div>
+                    <div class="course-content">
+                        <h5 class="course-title">@course.Title</h5>
+
+                        <!-- Rejection Info -->
+                        <div class="alert alert-danger py-2 px-3 mb-3" role="alert" style="font-size: 13px;">
+                            <i class="bi bi-exclamation-triangle me-1"></i>
+                            Course needs improvements before publication
+                        </div>
+
+                        <!-- Rejection Reasons -->
+                        <div class="rejection-feedback mb-3" style="background: #fff5f5; border: 1px solid #fed7d7; padding: 12px; border-radius: 6px;">
+                            <h6 style="font-size: 14px; font-weight: 600; color: #c53030; margin-bottom: 8px;">Issues to Address:</h6>
+                            <ul style="margin: 0; padding-left: 16px; font-size: 13px; color: #744210;">
+                                <li>Audio quality needs improvement in lessons 3-7</li>
+                                <li>Course outline lacks clear learning objectives</li>
+                                <li>Missing practical exercises and assignments</li>
+                                <li>Video resolution below required standards</li>
+                            </ul>
+                        </div>
+
+                        <div class="course-actions">
+                            <a href="@Url.Action("ViewFeedback", "Course", new { id = course.CourseId })" class="btn btn-outline-danger btn-sm-custom flex-fill">
+                                <i class="bi bi-chat-left-text me-1"></i>View Feedback
+                            </a>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm-custom" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("Edit", "Course", new { id = course.CourseId })">
+                                            <i class="bi bi-pencil me-2"></i>Fix Issues & Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("ReviewFeedback", "Course", new { id = course.CourseId })">
+                                            <i class="bi bi-chat-square-text me-2"></i>Detailed Review
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("FixIssues", "Course", new { id = course.CourseId })">
+                                            <i class="bi bi-lightbulb me-2"></i>Improvement Guide
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-primary" href="@Url.Action("Resubmit", "Course", new { id = course.CourseId })">
+                                            >
+                                            <i class="bi bi-arrow-repeat me-2"></i>Resubmit for Review
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="@Url.Action("Archive", "Course", new { id = course.CourseId })" onclick="return confirm('Are you sure you want to archive this course?')">
+                                            <i class="bi bi-archive me-2"></i>Archive Course
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="course-meta">
+                            Rejected: @course.UpdatedAt
+                        </div>
+                    </div>
+                </div>
+        
+    }
+    </div>
+}
+</div>

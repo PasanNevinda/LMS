@@ -1,0 +1,89 @@
+﻿@model List<LMS.ViewModels.Dashboard.CourseVm>
+
+<div class="tab-pane fade" id="pending" role="tabpanel">
+
+@if (Model?.Any() == true)
+{
+    <div class="course-grid">
+    @foreach (var course in Model)
+    {
+                <!-- Sample Pending Course Card -->
+                <div class="course-card" data-course-id="@course.CourseId">
+                    <div class="course-image" style="background: linear-gradient(135deg, #f69c08 0%, #e0a800 100%);">
+                        @if (!string.IsNullOrEmpty(course.ImagePath))
+                        {
+                            <img src="~/@course.ImagePath" alt="CourseImage">
+
+                        }
+                        else
+                        {
+                            <i class="bi bi-clock-history"></i>
+                        }
+                        <span class="status-badge badge-pending">Under Review</span>
+                    </div>
+                    <div class="course-content">
+                        <h5 class="course-title">@course.Title</h5>
+
+                        <!-- Review Status Info -->
+                        <div class="alert alert-warning py-2 px-3 mb-3" role="alert" style="font-size: 13px;">
+                            <i class="bi bi-hourglass-split me-1"></i>
+                            Your course is being reviewed by our team
+                        </div>
+
+
+
+                        <!-- Expected Review Time -->
+                        <div class="review-info">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Expected completion</small>
+                                <small class="text-primary fw-bold">2-3 days</small>
+                            </div>
+                            <div class="progress-bar-custom mt-2">
+                                <div class="progress-fill bg-warning" style="width: 60%"></div>
+                            </div>
+                        </div>
+
+                        <div class="course-actions">
+                            <a href="@Url.Action("Details", "Course", new { id = course.CourseId })" class="btn btn-outline-primary btn-sm-custom flex-fill">
+                                <i class="bi bi-eye me-1"></i>View Details
+                            </a>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm-custom" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+
+                                    <li>
+                                        <a class="dropdown-item text-warning" href="/Course/WithdrawReview/3" onclick="return confirm('Are you sure you want to withdraw this course from review?')">
+                                            <i class="bi bi-arrow-left-circle me-2"></i>Withdraw from Review
+                                        </a>
+                                    </li>
+
+                                    <li><hr class="dropdown-divider"></li>
+
+                                    <li><a asp-action="Delete" asp-controller="Course" asp-route-id="@course.CourseId" class="dropdown-item text-danger"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="course-meta">
+                            Submitted: @course.UpdatedAt.ToString("MMM dd, yyyy")
+                        </div>
+                    </div>
+                </div>
+    }
+    </div>
+}
+        
+else
+{
+        <div class="empty-state">
+            <i class="bi bi-clock-history empty-icon"></i>
+            <h4 class="empty-title">No courses under review</h4>
+            <p class="empty-description">Complete your draft courses and submit them for review to see them here.</p>
+            <a href="#" class="btn btn-udemy">Continue Editing Drafts</a>
+        </div>
+    
+}
+
+</div>

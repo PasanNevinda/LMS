@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EduPlatform</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/profile-styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LMS.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <!-- Logo Header -->
+    <div class="profile-logo-header">
+        <div class="container">
+            <a asp-action="Index" asp-controller="Home" class="profile-brand">
+                <i class="bi bi-mortarboard-fill"></i>
+                <span>EduPlatform</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="container py-4">
+        <!-- Page Header -->
+        <div class="profile-page-header">
+            <h1 class="profile-page-title">@ViewData["Title"]</h1>
+            <p class="profile-page-subtitle">Manage your account settings and preferences</p>
+        </div>
+
+        <main role="main">
+            <div class="row g-4">
+                <!-- Sidebar Navigation -->
+                <div class="col-lg-3">
+                    <partial name="_ManageNav" />
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-lg-9">
+                    <div class="profile-content-card">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted mt-5 py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 EduPlatform - All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

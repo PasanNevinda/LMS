@@ -1,0 +1,82 @@
+﻿<nav id="sidebar">
+    <div class="sidebar-header">
+        <a href="#" class="sidebar-brand">
+            <i class="bi bi-mortarboard-fill"></i>
+            <span>EduPlatform</span>
+        </a>
+    </div>
+
+    <div class="sidebar-nav">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link @(ViewData["CurrentPage"]?.ToString() == "Dashboard" ? "active" : "")" href="@Url.Action("TeacherDashBoard", "Teacher")">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(ViewData["CurrentPage"]?.ToString() == "Courses" ? "active" : "")" href="@Url.Action("Courses", "Teacher")">
+                    <i class="bi bi-journal-bookmark"></i>
+                    <span>My Courses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Assignments", "Teacher")">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Assignments</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Students", "Teacher")">
+                    <i class="bi bi-people"></i>
+                    <span>Students</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Analytics", "Teacher")">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Messages", "Teacher")">
+                    <i class="bi bi-chat-dots"></i>
+                    <span>Messages</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Bottom Navigation -->
+        <ul class="nav flex-column" style="position: absolute; bottom: 20px; width: 100%;">
+            <li class="nav-item">
+                <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            @* <li class="nav-item">
+                <a class="nav-link" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Log Out</span>
+                </a>
+            </li> *@
+            <li class="nav-item">
+                <form asp-area="Identity" asp-page="/Account/Logout"
+                      asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
+                      method="post">
+                    <button type="submit" class="nav-link btn btn-link p-0 m-0 text-start w-100 d-flex align-items-center">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Log Out</span>
+                    </button>
+                </form>
+            </li>
+
+
+            @* <li>
+                <form asp-area="Identity" asp-page="/Account/Logout" >
+                <button class="dropdown-item"><i class="bi bi-box-arrow-right me-2"></i>Logout</button></form></li> *@
+
+
+        </ul>
+    </div>
+</nav>

@@ -1,0 +1,146 @@
+﻿@using LMS.ViewModels.Admin_ViewModels.CourseReview
+@model CourseReviewVm
+
+    <div class="modal-body">
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs mb-4" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                    <i class="bi bi-info-circle me-2"></i>Overview
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="modules-tab" data-bs-toggle="tab" data-bs-target="#modules" type="button" role="tab">
+                    <i class="bi bi-list-ul me-2"></i>Modules & Content
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="preview-tab" data-bs-toggle="tab" data-bs-target="#preview" type="button" role="tab">
+                    <i class="bi bi-window me-2"></i>Course Preview
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Overview Tab -->
+            <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <img src="~/@Model.CourseImage" class="img-fluid rounded" alt="Course">
+                        <div class="text-center mt-2">
+                            <small class="text-muted"><i class="bi bi-image me-1"></i>Course Thumbnail</small>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <h4 id="courseName">@Model.Name</h4>
+                        <p class="text-muted"><i class="bi bi-person me-2"></i><span id="instructorName">@Model.TeacherName</span></p>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <p><strong><i class="bi bi-tags me-1"></i>Category:</strong> <span id="courseCategory">@Model.Category</span></p>
+                                <p><strong><i class="bi bi-currency-dollar me-1"></i>Price:</strong> <span id="coursePrice">$@Model.Price</span></p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong><i class="bi bi-translate me-1"></i>Language:</strong> <span id="courseLanguage">@Model.Language</span></p>
+                                <p><strong><i class="bi bi-people me-1"></i>Target Audience:</strong> <span id="courseLevel">@Model.TargetAudiance</span></p>
+                            </div>
+                        </div>
+
+                        <div class="course-details-section">
+                            <h6><i class="bi bi-card-text me-2"></i>Course Description</h6>
+                            <p id="courseDescription">@Model.Description/p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modules & Content Tab -->
+            <div class="tab-pane fade" id="modules" role="tabpanel">
+                <div id="modulesContainer">
+                    @{var i = 1;}
+                    @foreach(var module in Model.ModuleList)
+                    {
+                    <div class="module-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6><i class="bi bi-play-circle me-2"></i>Module @i @{i++;}: @module.Name</h6> 
+                                    <p class="text-muted mb-2">Duration: 4 hours</p>
+                                    <ul class="lesson-list">
+                                        @foreach(var content in module.Items)
+                                        {
+                                            <li class="list-group-item list-group-item-action"
+                                                onclick="handleClick('@content.ItemName', '@content.ItemType', '@Url.Content($"~/{content.Url}")')">
+                                                @content.ItemName
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+
+                                @* <div class="ms-2">
+                                    <button class="btn btn-sm btn-primary-custom" onclick="showVideoModal('Module 1: React Basics', 'dQw4w9WgXcQ')">
+                                        <i class="bi bi-play-fill"></i> Video
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="showPdfModal('Module 1: React Basics', 'module-1.pdf')">
+                                        <i class="bi bi-file-pdf"></i> PDF
+                                    </button>
+                                </div> *@
+                            </div>
+                        </div>
+                    }
+                    
+                </div>
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Total Duration:</strong> 23 hours of content | <strong>Modules:</strong> 4 | <strong>Lessons:</strong> 16
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="preview" role="tabpanel">
+                <div class="bg-light p-4 rounded" style="min-height: 400px;">
+
+                    <h5 class="text-center mb-3">Course Preview Video</h5>
+                    <div class="d-flex justify-content-center">
+                        <div class="ratio ratio-16x9 mb-4" style="max-width: 800px; width: 100%;">
+                            <iframe src="" allowfullscreen loading="lazy"></iframe>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="bi bi-star-fill me-2" style="color: gold;"></i>Student Reviews</h6>
+                            <div class="mb-2">
+                                <small class="text-muted">⭐⭐⭐⭐⭐ 4.8/5 (142 reviews)</small>
+                            </div>
+                            <p class="card-text text-muted"><em>"Great course! Very comprehensive and easy to follow. Highly recommended."</em></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+    @if(Model.CourseStatus == LMS.Models.Entities.CourseStatus.Pending)
+    {
+        <button type="button" class="btn btn-danger-custom" onclick="openRejectModal(@Model.CourseId)">
+                <i class="bi bi-x-circle me-2"></i>Reject
+            </button>
+        <button type="button" class="btn btn-success-custom" onclick="approveCourse(@Model.CourseId)">
+                <i class="bi bi-check-circle me-2"></i>Approve
+            </button>
+    }
+    else if (Model.CourseStatus != LMS.Models.Entities.CourseStatus.Published)
+    {
+        <button type="button" class="btn btn-rollback"
+                data-bs-toggle="tooltip"
+                title="Rollback to Pending"
+                onclick="rollbackToPending(@Model.CourseId)">
+            <i class="bi bi-arrow-counterclockwise me-2"></i>Rollback
+        </button>
+    }
+
+
+    </div>

@@ -1,0 +1,44 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Add Module";
+    Layout = null;
+}
+
+
+@model LMS.ViewModels.CourseDetailsVms.ModuleVm
+
+@* This partial renders a complete modal. The client will insert it into the DOM and call .modal('show') *@
+<div class="row">
+    <div class="col-md-12">
+            <form id="moduleAddForm" method="post" asp-action="Add">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Module</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="CourseId" value="@Model.CourseId" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input name="Name" value="@Model.Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="Description" class="form-control">@Model.Description</textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" type="submit">Add Module</button>
+                </div>
+            </form>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+﻿
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-mortarboard-fill"></i>
+            EduPlatform
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Register" asp-route-Type="Teacher">Teach on EduPlatform</a>
+                </li>
+                <li class="nav-item ms-3">
+                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-custom">Log In</a>
+                </li>
+                <li class="nav-item ms-2">
+                    <a asp-area="Identity" asp-page="/Account/Register" asp-route-Type="Student" class="btn btn-primary-custom">Sign Up</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

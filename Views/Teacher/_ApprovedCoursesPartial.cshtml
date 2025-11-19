@@ -1,0 +1,97 @@
+﻿@model List<LMS.ViewModels.Dashboard.CourseVm>
+
+<div class="tab-pane fade" id="approved" role="tabpanel">
+
+@if (Model?.Any() == true)
+{
+        <div class="course-grid">
+
+    @foreach (var course in Model)
+            {
+                <!-- Sample Approved Course Card -->
+                <div class="course-card" data-course-id="@course.CourseId">
+                    <div class="course-image" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                        @if (!string.IsNullOrEmpty(course.ImagePath))
+                        {
+                            <img src="~/@course.ImagePath" alt="CourseImage">
+
+                        }
+                        else
+                        {
+                            <i class="bi bi-check-circle-fill"></i>
+                        }
+                        <span class="status-badge badge-approved">Approved</span>
+                    </div>
+                    <div class="course-content">
+                        <h5 class="course-title">@course.Title</h5>
+
+                        <!-- Approval Info -->
+                        <div class="alert alert-success py-2 px-3 mb-3" role="alert" style="font-size: 13px;">
+                            <i class="bi bi-check-circle me-1"></i>
+                            Course approved! Ready to publish and start earning
+                        </div>
+
+
+                        <div class="course-actions">
+                            <a asp-action="Details" asp-controller="Course" asp-route-id="@course.CourseId" class="btn btn-udemy btn-sm-custom flex-fill">
+                                <i class="bi bi-rocket-takeoff me-1"></i>Publish Now
+                            </a>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm-custom" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="/Course/Edit/5">
+                                            <i class="bi bi-pencil me-2"></i>Edit Before Publishing
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/Course/Preview/5">
+                                            <i class="bi bi-eye me-2"></i>Preview Course
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/Course/ReviewFeedback/5">
+                                            <i class="bi bi-chat-square-text me-2"></i>View Review Feedback
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="/Course/SetPricing/5">
+                                            <i class="bi bi-currency-dollar me-2"></i>Set Pricing
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="/Course/MarketingSettings/5">
+                                            <i class="bi bi-megaphone me-2"></i>Marketing Settings
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="course-meta">
+                            Approved: @course.ReviewdAt.ToString("MMM dd, yyyy")
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-clock-history empty-icon"></i>
+            <h4 class="empty-title">No courses under review</h4>
+            <p class="empty-description">Complete your draft courses and submit them for review to see them here.</p>
+            <a href="#" class="btn btn-udemy">Continue Editing Drafts</a>
+        </div>
+        
+    }
+
+        
+
+</div>

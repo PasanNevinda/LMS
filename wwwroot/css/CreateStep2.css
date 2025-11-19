@@ -1,0 +1,120 @@
+﻿:root {
+    --udemy-primary: #a435f0;
+    --udemy-secondary: #1c1d1f;
+    --udemy-accent: #f7f9fa;
+    --udemy-border: #d1d7dc;
+    --udemy-success: #00ac4f;
+}
+
+body {
+    background-color: var(--udemy-accent);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.progress-header {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.progress-bar-custom {
+    height: 8px;
+    background-color: #e7e7e7;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--udemy-primary), #8710d8);
+    width: 75%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.sidebar {
+    position: sticky;
+    top: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.sidebar-header {
+    background: linear-gradient(135deg, var(--udemy-primary), #8710d8);
+    color: white;
+    padding: 20px;
+    font-weight: 600;
+}
+
+.sidebar-nav .nav-link {
+    color: var(--udemy-secondary);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+    .sidebar-nav .nav-link.active {
+        background-color: rgba(164, 53, 240, 0.1);
+        color: var(--udemy-primary);
+        border-right: 3px solid var(--udemy-primary);
+    }
+
+.content-area {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    min-height: 600px;
+}
+
+.section-content {
+    display: none;
+    padding: 32px;
+}
+
+    .section-content.active {
+        display: block;
+    }
+
+.action-buttons {
+    background-color: #fafbfc;
+    padding: 24px 32px;
+    border-top: 1px solid var(--udemy-border);
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--udemy-primary), #8710d8);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.btn-secondary-custom {
+    background: linear-gradient(135deg, var(--udemy-primary), #8710d8);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+}

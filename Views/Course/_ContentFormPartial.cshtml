@@ -1,0 +1,46 @@
+﻿@using LMS.ViewModels.CourseDetailsVms
+@model ContentUploadVm
+
+<div id="ContentDiv">
+    <h3>Upload File</h3>
+    
+    <div class="card p-4 shadow-sm" style="max-width: 600px;">
+        <form id="addContentForm" method="GET" >
+            <input type="hidden" asp-for="CourseId" />
+            <input type="hidden" asp-for="ModuleId" />
+            <div class="mb-3">
+                <label for="fileInput" class="form-label">Choose File</label>
+                <input type="file" id="fileInput" class="form-control" />
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress mb-3" style="height: 25px;">
+                <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+            </div>
+
+            <div class="d-flex gap-2">
+              @*<button type="button" id="uploadBtn" class="btn btn-primary"
+                        onclick="Resumble(@Model.CourseId, @Model.ModuleId)">Upload</button>*@  
+                <button type="button" id="uploadBtn" class="btn btn-warning">Upload</button>
+                <button type="button" id="pauseBtn" class="btn btn-warning">Pause</button>
+                <button type="button" id="resumeBtn" class="btn btn-success">Resume</button>
+                <button type="button" id="cancelBtn" class="btn btn-danger">Cancel</button>
+            </div>
+            <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="Description" name="Description" rows="4"
+                    placeholder="Enter description here..."></textarea>
+        </div>
+            <div class="mt-3">
+                <strong>Status:</strong> <span id="uploadStatus">Waiting</span><br />
+                <strong>File:</strong> <span id="fileName">None</span>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    
+    <script src="~/js/tus.js"></script>
+<script src="~/js/tusUpload.js"></script>
+}

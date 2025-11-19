@@ -1,0 +1,65 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<h3><i class="bi bi-person-circle me-2"></i>Personal Information</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<!-- Profile Avatar Section -->
+<div class="text-center mb-4">
+    <div class="profile-avatar">
+        @Model.Username?.Substring(0, 1).ToUpper()
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger validation-summary-errors" role="alert"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Username" class="form-control" placeholder="Username" disabled />
+                <label asp-for="Username" class="form-label">
+                    <i class="bi bi-person me-1"></i>Username
+                </label>
+                <small class="text-muted">Username cannot be changed</small>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Phone Number" />
+                <label asp-for="Input.PhoneNumber" class="form-label">
+                    <i class="bi bi-telephone me-1"></i>Phone Number
+                </label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button id="update-profile-button" type="submit" class="btn btn-lg btn-primary">
+                    <i class="bi bi-check-circle me-2"></i>Save Changes
+                </button>
+            </div>
+        </form>
+
+        <!-- Security Badge -->
+        <div class="security-badge mt-4">
+            <i class="bi bi-shield-check"></i>
+            <p class="security-badge-text">Your information is secure and encrypted</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Add loading state to button on form submit
+        document.getElementById('profile-form').addEventListener('submit', function() {
+            var btn = document.getElementById('update-profile-button');
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+            btn.innerHTML = '<span>Saving...</span>';
+        });
+    </script>
+}

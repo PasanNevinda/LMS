@@ -1,0 +1,88 @@
+﻿@model List<LMS.ViewModels.Dashboard.CourseVm>
+
+<div class="tab-pane fade" id="published" role="tabpanel">
+@if (Model?.Any() == true)
+{
+        <div class="course-grid">
+            @foreach (var course in Model)
+            {
+                <div class="course-card" data-course-id="@course.CourseId">
+                    <div class="course-image">
+                        @if (!string.IsNullOrEmpty(course.ImagePath))
+                        {
+                            <img src="~/@course.ImagePath" alt="CourseImage">
+
+                        }
+                        else
+                        {
+                        <i class="bi bi-trophy"></i>
+                        }
+                        <span class="status-badge badge-published">Live</span>
+                    </div>
+                    <div class="course-content">
+                        <h5 class="course-title">@course.Title</h5>
+
+                        <div class="course-stats">
+                            <div class="stat-item">
+                                <span class="stat-value">1,247</span>
+                                <span class="stat-label">Students</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">4.8</span>
+                                <span class="stat-label">Rating</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">$12.4k</span>
+                                <span class="stat-label">Revenue</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-section">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small class="text-muted">Course health</small>
+                                <small class="text-muted">@course.Progress%</small>
+                            </div>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill bg-success" style="width: @course.Progress%"></div>
+                            </div>
+                        </div>
+
+                        <div class="course-actions">
+                            <a href="@Url.Action("Manage", "Course", new { id = course.CourseId })" class="btn btn-outline-success btn-sm-custom">
+                                <i class="bi bi-gear me-1"></i>Manage
+                            </a>
+                            <a href="@Url.Action("Stats", "Course", new { id = course.CourseId })" class="btn btn-outline-primary btn-sm-custom">
+                                <i class="bi bi-graph-up me-1"></i>Stats
+                            </a>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm-custom" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="@Url.Action("ViewPublic", "Course", new { id = course.CourseId })" target="_blank"><i class="bi bi-box-arrow-up-right me-2"></i>View Public Page</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Students", "Course", new { id = course.CourseId })"><i class="bi bi-people me-2"></i>View Students</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Reviews", "Course", new { id = course.CourseId })"><i class="bi bi-star me-2"></i>Reviews</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="course-meta">
+                            @course.UpdatedAt.ToString("MMM dd, yyyy")
+                        </div>
+                    </div>
+                </div>
+            }
+    </div>
+    
+}
+
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-clock-history empty-icon"></i>
+            <h4 class="empty-title">No courses under review</h4>
+            <p class="empty-description">Complete your draft courses and submit them for review to see them here.</p>
+            <a href="#" class="btn btn-udemy">Continue Editing Drafts</a>
+        </div>
+    }
+</div>

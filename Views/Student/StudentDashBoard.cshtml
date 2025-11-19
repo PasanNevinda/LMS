@@ -1,0 +1,128 @@
+﻿@using LMS.ViewModels.Student_ViewModles
+@model StudentDashboardVm
+@{
+    Layout = "_StudentLayout";
+}
+
+<!-- Dashboard View -->
+<div id="dashboardView">
+    <div class="page-header">
+        <div class="container-fluid px-4">
+            <h1 class="page-title">My Learning Dashboard</h1>
+            <p class="text-muted">Track your progress and continue learning</p>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4 mb-4">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-collection-play"></i>
+                    </div>
+                    <span class="stat-value">@Model.Courses.Count()</span>
+                    <span class="stat-label">Enrolled Courses</span>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-cart3"></i>
+                    </div>
+                    <span class="stat-value" id="cartCount">@ViewData["CartItemCount"]</span>
+                    <span class="stat-label">Cart Items</span>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="container-fluid px-4">
+        <h3 class="mb-4">My Enrolled Courses</h3>
+        <div class="row g-4">
+
+            @foreach(var course in Model.Courses)
+            {
+                
+                <div class="col-md-3">
+                    <span>course id = @course.CourseId</span>
+                    <form asp-controller="Student" asp-action="ViewEnrolledCourse" asp-route-Id="@course.CourseId" method="get">
+                        <div class="course-card">
+                            <img src="~/@course.CourseImage" class="course-image" alt="Course">
+                            <div class="course-content">
+                                <h5 class="course-title">@course.CourseName</h5>
+                                <p class="course-instructor">By @course.TeacherName</p>
+                                <div class="progress-section">
+                                    <div class="d-flex justify-content-between mb-2">
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div class="course-stats">
+                                    <span><i class="bi bi-play-circle me-1"></i>@course.NoOfLessions</span>
+                                @{
+                                    int total = course.Totalminitues;
+                                    int hours = total / 60;
+                                    int minutes = total % 60;
+                                }
+                                    <span><i class="bi bi-clock me-1"></i>
+                                    @if (hours > 0)
+                                    {
+                                        @($"{hours}h ")
+                                    }
+
+                                    @($"{minutes}m")
+                                    </span>
+                                </div>
+                                <button type="submit" class="btn btn-primary-custom">
+                                    <i class="bi bi-play-circle me-2"></i>Continue Learning
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            }
+
+           
+
+        </div>
+    </div>
+</div>
+
+<nav aria-label="Course pagination" class="mt-5 d-flex justify-content-center">
+
+    @{
+        var startItem = (Model.Pager.CurrentPage - 1) * Model.Pager.PageSize + 1;
+        var endItem = Math.Min(startItem + Model.Pager.PageSize - 1, Model.Pager.TotalItems);
+    }
+
+    <ul class="pagination pagination-lg">
+        @if (Model.Pager.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" onclick="loadEnrolledCourses(@Model.Pager.CurrentPage - 1)"
+                   tabindex="-1" aria-disabled="false">
+                    <i class="bi bi-chevron-left"></i> Prev
+                </a>
+            </li>
+        }
+
+        @for (int p = Model.Pager.StartPage; p <= Model.Pager.EndPage; p++)
+        {
+            <li class="page-item @(p == Model.Pager.CurrentPage ? "active" : "")"><a class="page-link" onclick="loadEnrolledCourses(@p); return false;">@p</a></li>
+        }
+
+        @if (Model.Pager.TotalItems > 0 && Model.Pager.CurrentPage != Model.Pager.TotalPages)
+        {
+            <li class="page-item @(Model.Pager.CurrentPage >= Model.Pager.TotalPages ? "disabled" : "")">
+                <a class="page-link" onclick="loadEnrolledCourses(@Model.Pager.CurrentPage + 1)" )>
+                    Next <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        }
+
+    </ul>
+</nav>

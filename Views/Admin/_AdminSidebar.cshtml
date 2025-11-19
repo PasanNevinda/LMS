@@ -1,0 +1,56 @@
+﻿<nav class="sidebar collapsed" id="sidebar">
+    <div class="sidebar-brand">
+        <h4><i class="bi bi-mortarboard-fill me-2"></i><span>LMS Admin</span></h4>
+    </div>
+    <ul class="sidebar-nav list-unstyled">
+        <li class="nav-item">
+            <a asp-action="AdminDashboard" asp-controller="Admin" class="nav-link @(ViewData["CurrentPage"]?.ToString() == "AdminDashboard" ? "active" : "")">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+                @* <div class="nav-tooltip">Test</div> *@
+            </a>
+        </li>
+        <li class="nav-item">
+            <a asp-action="ManageCourse" asp-controller="Admin" class="nav-link @(ViewData["CurrentPage"]?.ToString() == "ManageCourse" ? "active" : "")">
+                <i class="bi bi-book-fill"></i>
+                <span>Course Management</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-page="users">
+                <i class="bi bi-people-fill"></i>
+                <span>User Management</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-page="categories">
+                <i class="bi bi-tags-fill"></i>
+                <span>Categories</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-page="analytics">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Analytics</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-page="reports">
+                <i class="bi bi-file-earmark-text-fill"></i>
+                <span>Reports</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-page="settings">
+                <i class="bi bi-gear-fill"></i>
+                <span>Settings</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link" data-page="rejected">
+                <i class="bi bi-x-circle-fill"></i>
+                <span>Rejected Courses</span>
+            </a>
+        </li>
+    </ul>
+</nav>
